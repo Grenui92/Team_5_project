@@ -108,7 +108,7 @@ class UserInterface:
         exit("Bye")
 
     @staticmethod
-    def __help_me(*_):
+    def __help_me(*_) -> str:
         return "If you want to know how to use this script - use command 'instruction' with:\n" \
                "'contacts' - to read about ContactBook commands.\n" \
                "'notes' - to read about NoteBook.\n" \
@@ -116,7 +116,7 @@ class UserInterface:
                "Or use 'exit' if you want to leave."
 
     @staticmethod
-    def __instructions(category: str, *_):
+    def __instructions(category: str, *_) -> str:
         """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
 
         match category:  # працює лише на пайтон 3.10+
