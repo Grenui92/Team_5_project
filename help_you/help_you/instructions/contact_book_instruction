@@ -1,0 +1,36 @@
+ "create_contact NAME" - Створює контакт з іменем NAME.
+ Приклад: create_contact Stas
+ У разі успішного виконання команди повертає:
+
+ У разі виникнення помилки, що контакт з цим ім'ям існує:
+
+ У разі виникнення помилки ще якоїсь:
+
+ -----
+ "show_contact_book" - Показує всі контакти які є в КонтактнійКнизі зі всією інформацією про кожен контакт.
+ Приклад: show_contact_book
+ Які тут можуть бути помилки? (питання до колег)
+ -----
+ "show_contact NAME" - Показує контакт, який має ім'я NAME. Всю інформацію що мається в цьому контакті.
+ Приклад: show_contact Stas
+ У разі успішного виконання повертає:
+ Name: Stas
+ phones: [x, y, s]
+ emails: [x, y, s]
+ address: [x, y, x]
+ birthday: 25.06.1992
+ У разі якщо контакт з цим іменем не знайдено:
+
+ -----
+ "show_contact_page": self.book.show_page,
+ "clear_contact_book": self.book.delete_all,
+ "delete_contact": self.book.delete_one,
+ "add_to_contact": self.book.add_values,
+ "edit_contact": self.book.edit_information,
+ "edit_contact_name": self.book.edit_name,
+ "search_in_contacts": self.book.search_in,
+ "sort_contacts_by_tags": self.sorted_by_tags,
+
+ "show_birthdays": self.book.show_nearest_birthdays,
+ "days_to_birthday": self.book.days_to_birthday,
+ "show_all_birthdays": self.book.days_to_birthday_for_all,
