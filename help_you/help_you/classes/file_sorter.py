@@ -114,6 +114,7 @@ class Filter:
 
 
     def _remove_checked(self, name: Path) -> Path:
+        """Remove archive if it is unpacked."""
         destination = self._make_destination(name, False)
         if destination.exists():
             name.unlink()
@@ -191,6 +192,7 @@ class Task(threading.Thread):
 
 
     def __iadd__(self, filter: Filter):
+        """Add filter to task."""
         self._filters[filter.destination] = filter
         filter.path = self.path
         for ext in filter.extensions:
@@ -199,6 +201,7 @@ class Task(threading.Thread):
 
 
     def __isub__(self, filter: Filter):
+        """Remove filter from task."""
         filter.path = None
         self._filters.pop(filter.destination)
         for ext in filter.extensions:
@@ -207,10 +210,13 @@ class Task(threading.Thread):
 
 
     def sort(self, path = None):
+
         if not path:
             path = self.path
+
         for name in os.listdir(path):
             pathname = Path(path) / name
+
             if pathname.is_dir():
                 if pathname.name in self._filters:  # Exclude destination directories.
                     continue
@@ -221,12 +227,12 @@ class Task(threading.Thread):
                 ext = pathname.suffix.replace('.', '').lower()
                 if len(self._ext2filter) == 1 and '*' in self._ext2filter:
                     filter = self._ext2filter['*']
-                elif not ext in self._ext2filter and "other" in self._filters:
+                elif not ext in self._ext2filter and "other" in self._filters:  #   If file extesions not found in filters' list and present Filter("other")
                     filter = self._filters["other"]
                 else:
                     filter = self._ext2filter[ext]
                 if filter:
-                    filter(pathname)
+                    filter(pathname)    #   Call filter.
             else:  # ignore all other filesystem entities.
                 pass
 
@@ -277,5 +283,8 @@ if __name__ == "__main__":
     task2.filters = task.filters
 
     sorter += task2
-    sorter.start()  #   Start tasks as separated threads
-    sorter.sort()   #   Start tasks in main thread
+    threaded = True
+    if threaded:
+        sorter.start()  #   Start tasks as separated threads.
+    else:
+        sorter.sort()   #   Start tasks in main thread.
