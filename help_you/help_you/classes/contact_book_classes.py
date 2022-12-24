@@ -26,7 +26,9 @@ class Phone(Field):
     @staticmethod
     def verify_phone(value):
         phone = search(r'(^\d{12}$)|(^0\d{9}$)', value)
-        if not phone:
+        if phone:
+            return phone
+        else:
             raise ValueError("Phone number must be 12 or 10 digits")
 
     @Field.value.setter
@@ -42,7 +44,9 @@ class Email(Field):
         """Верифікація введеного e-mail користувача"""
 
         email = search(r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
-        if not email:
+        if email:
+            return email
+        else:
             raise ValueError("Е-mail must contain letters, numbers and symbols [._-]")
 
     @Field.value.setter
@@ -79,7 +83,9 @@ class Address(Field):
         """Верифікація введеної адреси. Повинна складатися мінімум з 2 символів """
 
         address = search(r'^[a-z0-9,-/]{2,}$', value)
-        if not address:
+        if address:
+            return address
+        else:
             raise ValueError("Аddress must be longer than 1 letter")
 
     @Field.value.setter
