@@ -51,11 +51,11 @@ class Filter:
 
     def __init__(self, destination: Path, extensions, functions, normalize = True, overwrite= True):
 
-        self.path           = None
-        self.destination    = destination
-        self.normalize      = normalize
-        self.overwrite      = overwrite
-        self._functions      = []
+        self.path           = None          #   Root directory. Sets with adding Filter to Task.
+        self.destination    = destination   #   Destination directory.
+        self.normalize      = normalize     #   Normalize files' names.
+        self.overwrite      = overwrite     #   Overwrite files in destination directory.
+        self._functions      = []           #   List of functions' objects.
 
         if isinstance(extensions, str):
             self.extensions = extensions.lower().split()
@@ -67,19 +67,20 @@ class Filter:
         else:
             self.functions = list(map(lambda x: x.lower(),functions))
 
+        #   Fill list with function objects.
         for name in self.functions:
             function = getattr(self, "_" + name)
             self._functions.append(function)
 
 
     def __call__(self,name: Path):
+        """Call all functions in list."""
         for function in self._functions:
             function(name)
         return self
 
     def _make_destination(self, name: Path, split = True) -> Path:
-        """Create destination path with normalization, if normalization if ON"""
-
+        """Create destination path with normalization, if normalization is on."""
         file_name   = name.stem
         file_ext    = ''
         if split:
@@ -162,8 +163,8 @@ class Task(threading.Thread):
         else:
             raise FileExistsError(f"Path: '{path}' doesn't exists.")
         
-        self._filters = {}
-        self._ext2filter = {}
+        self._filters       = {}    #   Destination path to Filter mapping ex. {"archives": Filter()}.
+        self._ext2filter    = {}    #   File extension to Filter mapping ex. {"zip": Filter()}.
         if filter:
             self._filters[filter.destination] = filter
             filter.path = self.path
@@ -177,6 +178,7 @@ class Task(threading.Thread):
         for f in filters.values():
             f.path = None
         return filters
+
 
     @filters.setter
     def filters(self,filters: list):
@@ -195,6 +197,7 @@ class Task(threading.Thread):
             self._ext2filter[ext] = filter
         return self
 
+
     def __isub__(self, filter: Filter):
         filter.path = None
         self._filters.pop(filter.destination)
@@ -209,7 +212,7 @@ class Task(threading.Thread):
         for name in os.listdir(path):
             pathname = Path(path) / name
             if pathname.is_dir():
-                if pathname.name in self._filters:  # Exclude destination directories
+                if pathname.name in self._filters:  # Exclude destination directories.
                     continue
                 self.sort(pathname)
                 if not self.keep_empty_dir and pathname.exists() and not len(os.listdir(pathname)):
@@ -224,8 +227,9 @@ class Task(threading.Thread):
                     filter = self._ext2filter[ext]
                 if filter:
                     filter(pathname)
-            else:  # ignore all other filesystem entities
+            else:  # ignore all other filesystem entities.
                 pass
+
 
     def run(self):
         self.sort()
@@ -273,5 +277,5 @@ if __name__ == "__main__":
     task2.filters = task.filters
 
     sorter += task2
-    sorter.start()
-    # task += Filter("videos", ["mov", "mpg", "mpg4", "avi"], ["move"])
+    sorter.start()  #   Start tasks as separated threads
+    sorter.sort()   #   Start tasks in main thread
