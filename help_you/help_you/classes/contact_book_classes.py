@@ -132,6 +132,7 @@ class Record:
     def remove_phone(self, del_phone: str):
         """Видалення номеру телефону """
 
+        del_phone = Phone.verify_phone(del_phone)
         for phone in self.phones:
             if phone.value == del_phone:
                 self.phones.remove(phone)
@@ -218,7 +219,7 @@ class Record:
     def remove_address(self, del_address: str):
         """Видалення адреси контакту """
         for address in self.addresses:
-            if address == del_address:
+            if address.value == del_address:
                 self.addresses.remove(address)
                 return f"Address '{del_address}' is delete"
         return f"Phone '{del_address}' is not in AddressBook. Try again!"
