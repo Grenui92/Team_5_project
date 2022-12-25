@@ -16,4 +16,6 @@ def input_error(func):
             return exc.args[0]
         except Warning as exc:
             return exc.args[0]
+        except StopIteration as exc:
+            return exc.args[0]
     return wrapper
