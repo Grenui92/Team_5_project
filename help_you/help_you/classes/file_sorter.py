@@ -21,7 +21,6 @@ from copy import deepcopy
 from queue import Queue
 from pathlib import Path
 
-# import os
 import shutil
 import threading
 
@@ -32,7 +31,7 @@ class Filter:
     translation = None
     
     @classmethod
-    def _make_translation(cls) -> dict:
+    def make_translation(cls) -> dict:
         """Create translation table from cyrillic to latin. Also replace all other character with symbol - '_' except digits"""
         translation_table = {}
         latin = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
@@ -167,12 +166,12 @@ class Filter:
                 raise
         return None
 
-Filter.translation = Filter._make_translation()
+Filter.translation = Filter.make_translation()
 
 
 class Task(threading.Thread):
 
-    def __init__(self, path: Path, filter: Filter = None, keep_empty_dir = False):
+    def __init__(self, path, filter: Filter = None, keep_empty_dir = False):
         threading.Thread.__init__(self)
         self._status = Queue()
         
@@ -342,19 +341,13 @@ def sort_targets(path_to_target,threaded = False):
         sorter.start()  #   Start tasks as separated threads. All exceptions store in Task's _status(Queue()) attribute
         
     else:
-        try:
-            sorter.sort()   #   Start tasks in main thread.
-        except Exception as e:
-            exceptions = e.args[0]
-            for exception in exceptions:
-                print(exception)
+        # try:
+        sorter.sort()   #   Start tasks in main thread.
+        # except Exception as e:
+        #     exceptions = e.args[0]
+        #     for exception in exceptions:
+        #         print(exception)
 
-    # try:
-    #     task2 = Task("D:/edu/test1")#, Filter("sources", "py", "copy"))
-    #     task2.filters = task.filters
-    #     sorter += task2
-    # except Exception as e:
-    #     pass
 
 if __name__ == "__main__":
     sort_targets("D:/edu/test D:/edu/test1")
