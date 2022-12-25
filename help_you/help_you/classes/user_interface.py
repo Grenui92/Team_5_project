@@ -1,7 +1,11 @@
 from os import path
+
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
-from decorator import input_error
+
+from .decorator import input_error
+from .file_sorter import sort_targets
+
 
 class WorkContact:
     pass
@@ -61,8 +65,9 @@ class UserInterface:
             self.__show_results(result)
 
     """MAIN"""
-    @input_error
+
     @staticmethod
+    @input_error
     def __parse_user_text(text: str) -> list:
         """Обробка тексту. У нас по суті є два типи команд - ті щоскладаються лише з команди, це такі як show_all & delete_all для них створено
         іф. Хендлер зажди приймає три параметри й щоб не робити зайвих перевірок і іншого - ми в нього завжди будемо передавати три аргументи,
@@ -97,8 +102,8 @@ class UserInterface:
         data = prompt('"Please enter what do you want to do: ', completer=input_completer)
         return data
 
-    @input_error
     @staticmethod
+    @input_error
     def __show_results(result: str | list):
         """Виводить результат запросу користувача. Вдалий чи не вдалий - все одно виводить. Навіть декоратор якщо ловить помилку - він не принтує
         рядок, а ретюрнить його сюди. Всі принти мають виконуватися саме тут. І ніде більше в програмі. Окрім FileSorter"""
@@ -123,8 +128,8 @@ class UserInterface:
                "'file' - to read about FileSorter.\n" \
                "Or use 'exit' if you want to leave."
 
-    @input_error
     @staticmethod
+    @input_error
     def __instructions(category: str, *_) -> str:
         """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
 
@@ -145,10 +150,12 @@ class UserInterface:
 
     """FILE SORTER"""
 
-    @input_error
     @staticmethod
-    def __file_sorter(path_for_sorting: str, *_):
-        one_time = FileSorter(path_for_sorting)
-        one_time.job()
+    @input_error
+    def __file_sorter(path_for_sorting: str, path_for_sorting_2: str):
+        if path_for_sorting_2:
+            sort_targets([path_for_sorting, path_for_sorting_2[0]])
+        else:
+            sort_targets(path_for_sorting)
 
     """END FILE SORTER"""
