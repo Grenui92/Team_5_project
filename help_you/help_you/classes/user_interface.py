@@ -87,7 +87,7 @@ class UserInterface:
         else:
             raise Warning(command)
 
-    @staticmethod
+
     def __input_user_text(self) -> str:
         """Просто зчитує текст."""
         commands_completer = self.commands
