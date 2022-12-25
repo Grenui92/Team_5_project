@@ -287,6 +287,7 @@ class Task(threading.Thread):
 class FileSorter:
 
     def __init__(self, task: Task = None):
+        self._status = []
         self.tasks = {}
         if task:
             self.tasks[task.path] = task
@@ -305,31 +306,40 @@ class FileSorter:
 
     def sort(self):
         for task in self.tasks.values():
-            task.sort()
+            try:    #   Catch all exception in thread
+                task.sort()
+            except Exception as e:
+                exceptions = e.args[0]
+                exception = exceptions.get_nowait()
+                while exception and not exceptions.empty():
+                    self._status.append(str(task.path) + " : " + str(exception))
+                    exception = exceptions.get_nowait()
+                continue
+        if len(self._status):
+            raise Exception(self._status)
 
 
-def main():
+def sort_targets(path_to_target,threaded = False):
     sorter = FileSorter()
 
-    task = Task("D:/edu/test")
-    task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked", "move"])
-    task += Filter("audios",    ["wav", "mp3", "ogg", "amr"],                                                       ["move"])
-    task += Filter("images",    ["jpeg", "png", "jpg", "svg"],                                                      ["move"])
-    task += Filter("videos",    ["avi", "mp4", "mov", "mkv"],                                                       ["move"])
-    task += Filter("documents", ["doc", "docx", "txt", "pdf", "xls", "xlsx", "ppt", "pptx", "rtf", "xml", "ini"],   ["move"])
-    task += Filter("softwares", ["exe", "msi", "bat", "dll"],                                                       ["move"])
-    task += Filter("other",     [""],                                                                               ["move"])
+    if isinstance(path_to_target, str):
+        pathes = path_to_target.split()
+    elif isinstance(path_to_target,list):
+        pathes = path_to_target
+    else:
+        raise ValueError(f"{path} value error.")
+    for path in pathes:
+        task = Task(path)
+        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked", "move"])
+        task += Filter("audios",    ["wav", "mp3", "ogg", "amr"],                                                       ["move"])
+        task += Filter("images",    ["jpeg", "png", "jpg", "svg"],                                                      ["move"])
+        task += Filter("videos",    ["avi", "mp4", "mov", "mkv"],                                                       ["move"])
+        task += Filter("documents", ["doc", "docx", "txt", "pdf", "xls", "xlsx", "ppt", "pptx", "rtf", "xml", "ini"],   ["move"])
+        task += Filter("softwares", ["exe", "msi", "bat", "dll"],                                                       ["move"])
+        task += Filter("other",     [""],                                                                               ["move"])
 
-    sorter += task
+        sorter += task
 
-    try:
-        task2 = Task("D:/edu/test1")#, Filter("sources", "py", "copy"))
-        task2.filters = task.filters
-        sorter += task2
-    except Exception as e:
-        pass
-
-    threaded = False
     if threaded:
         sorter.start()  #   Start tasks as separated threads. All exceptions store in Task's _status(Queue()) attribute
         
@@ -338,11 +348,15 @@ def main():
             sorter.sort()   #   Start tasks in main thread.
         except Exception as e:
             exceptions = e.args[0]
-            exception = exceptions.get_nowait()
-            while exception and not exceptions.empty():
+            for exception in exceptions:
                 print(exception)
-                exception = exceptions.get_nowait()
 
+    # try:
+    #     task2 = Task("D:/edu/test1")#, Filter("sources", "py", "copy"))
+    #     task2.filters = task.filters
+    #     sorter += task2
+    # except Exception as e:
+    #     pass
 
 if __name__ == "__main__":
-    main()
+    sort_targets("D:/edu/test D:/edu/test1")
