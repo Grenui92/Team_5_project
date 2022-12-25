@@ -1,6 +1,7 @@
 import pickle
 from collections import UserDict
 from re import findall
+from os import path
 
 
 class Note:
@@ -27,20 +28,11 @@ class Note:
         self.tags.clear()
         return f"The tags note '{self.name}' is clear"
 
+
 class NoteBook(UserDict):
-    def __init__(self, file_path=None):
+    def __init__(self):
         super().__init__()
-        self.file_path = ""
-        self.count = 0
-
-    def create_note(self, note):
-        """Створює нову нотатку - екземпляр класу NoteBook"""
-
-        if note.name.value not in self.data:
-            self.data[note.name.value] = note
-            return f"New note '{note.name.value}' is added"
-        else:
-            return f"This note already exist in NoteBook"
+        self.file_path = path.join("save", "note_book.bin")
 
     def search_in_notes(self, search_data: str):
         """Пошук заданого фрагменту у нотатках"""
@@ -55,15 +47,14 @@ class NoteBook(UserDict):
     def iterator(self, n: int):
         """Пагінація - посторінковий вивід Книги нотаток"""
 
-        notes_in_page = list(self.data.keys())
-        if self.count >= len(notes_in_page):
-            raise StopIteration("This is the end of NoteBook")
-        result_list = notes_in_page[
-            self.count: min(self.count + n, len(notes_in_page))
-        ]
-        for i in result_list:
-            self.count += 1
-        yield result_list
+        page = []
+        for i in self.data.keys():
+            page.append(i)
+            if len(page) == n:
+                yield page
+                page = []
+        if page:
+            yield page
 
     def save_to_file(self):
         """Збереження Книги нотаток у бінарний файл"""
