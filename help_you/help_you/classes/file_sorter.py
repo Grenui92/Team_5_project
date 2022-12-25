@@ -21,7 +21,6 @@ from copy import deepcopy
 from queue import Queue
 from pathlib import Path
 
-import os
 import shutil
 import threading
 
@@ -32,7 +31,7 @@ class Filter:
     translation = None
     
     @classmethod
-    def _make_translation(cls) -> dict:
+    def make_translation(cls) -> dict:
         """Create translation table from cyrillic to latin. Also replace all other character with symbol - '_' except digits"""
         translation_table = {}
         latin = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
@@ -167,12 +166,12 @@ class Filter:
                 raise
         return None
 
-Filter.translation = Filter._make_translation()
+Filter.translation = Filter.make_translation()
 
 
 class Task(threading.Thread):
 
-    def __init__(self, path: Path, filter: Filter = None, keep_empty_dir = False):
+    def __init__(self, path, filter: Filter = None, keep_empty_dir = False):
         threading.Thread.__init__(self)
         self._status = Queue()
         
@@ -184,7 +183,7 @@ class Task(threading.Thread):
                 path = Path(path)
         if path.exists():
             self.path    = path
-        else:
+        else:   #   Before running protection
             raise FileExistsError(f"Path: '{path}' doesn't exists.")
         
         self._filters       = {}    #   Destination path to Filter mapping ex. {"archives": Filter()}.
@@ -231,46 +230,76 @@ class Task(threading.Thread):
             self._ext2filter.pop(ext)
         return self
 
+    def _file_processing(self,pathname):
 
+        ext = pathname.suffix.replace('.', '').lower()  #   Get file extesion
+        #   Find filter by extension
+        if len(self._ext2filter) == 1 and '*' in self._ext2filter:
+            filter_ = self._ext2filter['*']
+        elif not ext in self._ext2filter and "other" in self._filters:  #   If file extesions not found in filters' list and present Filter("other")
+            filter_ = self._filters["other"]
+        else:
+            filter_ = self._ext2filter[ext]
+        
+        if filter_: #   Filter found
+            generator = filter_(pathname)    #   Call every filter.
+            while True:
+                try:
+                    result = next(generator)    #   Call filter and then check for return value
+                    if isinstance(result, Exception):
+                        self._status.put(result)    #   Store all exceptions for filter functions' call
+                        continue
+                except StopIteration:
+                    break
+
+
+    #   Store exceptiona from imported modules
+    #   As I can't garanty that filsystem can't be modified between 'os' module calls.
+    #   I'm catch and store all its excetions.
     def sort(self, path = None):
 
-        if not path:
+        if not path:    # for root level, may be used without path parameter
             path = self.path
-
-        for name in path.iterdir():
-            pathname = Path(path) / name
-
-            try:
-                if pathname.is_dir():
-                    if pathname.name in self._filters:  # Exclude destination directories.
+        
+        #   Get dir entity type
+        try:
+            is_dir  = path.is_dir()
+            is_file = path.is_file()
+        except Exception as e:
+            self._status.put(e)
+        
+        if is_file: 
+            self._file_processing(path)
+        elif is_dir:
+            for path in path.iterdir():
+                #   Get dir entity type
+                try:
+                    is_dir  = path.is_dir()
+                    is_file = path.is_file()
+                except Exception as e:
+                    self._status.put(e)
+                
+                if is_dir:
+                    #   Exclude destination directories aka [archives, videos, audios nad etc. destination dirs].
+                    if path.name in self._filters:
                         continue
-                    self.sort(pathname)
-                    if not self.keep_empty_dir and pathname.exists() and not any(pathname.iterdir()):
-                        pathname.rmdir()
-                elif pathname.is_file():
-                    ext = pathname.suffix.replace('.', '').lower()
-                    if len(self._ext2filter) == 1 and '*' in self._ext2filter:
-                        filter = self._ext2filter['*']
-                    elif not ext in self._ext2filter and "other" in self._filters:  #   If file extesions not found in filters' list and present Filter("other")
-                        filter = self._filters["other"]
-                    else:
-                        filter = self._ext2filter[ext]
-                    if filter:
-                        generator = filter(pathname)    #   Call filter.
-                        while True:
-                            try:
-                                result = next(generator)
-                                if isinstance(result, Exception):
-                                    self._status.put(result)#, block=False)
-                                    continue
-                            except StopIteration:
-                                break
 
-            except Exception as e:
-                self._status.put(e)#,block= False)
-                continue
-        else:  # ignore all other filesystem entities.
-            pass
+                    self.sort(path)     #   Going to recusion
+
+                    #   Remove empty dirs
+                    if not self.keep_empty_dir and path.exists() and not any(path.iterdir()):
+                        try:
+                            path.rmdir()
+                        except Exception as e:
+                            self._status.put(e)
+                    
+                elif is_file:    #   Processing files
+                    self._file_processing(path)
+                else:
+                    continue
+
+        
+        # If exceptions is been and execution is in Main Thread, raise it all as Quequ object
         if  not self._status.empty() \
             and threading.current_thread() == threading.main_thread() \
             and path == self.path:
@@ -278,10 +307,7 @@ class Task(threading.Thread):
             raise Exception(self._status)
 
     def run(self):
-        try:    #   Catch all exception in thread
-            self.sort()
-        except Exception as e:
-            self._status.put(e)#,block= False)
+        self.sort()
 
 
 class FileSorter:
@@ -324,13 +350,13 @@ def sort_targets(path_to_target,threaded = False):
 
     if isinstance(path_to_target, str):
         pathes = path_to_target.split()
-    elif isinstance(path_to_target,list):
+    elif isinstance(path_to_target, list):
         pathes = path_to_target
     else:
         raise ValueError(f"{path} value error.")
     for path in pathes:
         task = Task(path)
-        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked", "move"])
+        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["unpack", "move"])
         task += Filter("audios",    ["wav", "mp3", "ogg", "amr"],                                                       ["move"])
         task += Filter("images",    ["jpeg", "png", "jpg", "svg"],                                                      ["move"])
         task += Filter("videos",    ["avi", "mp4", "mov", "mkv"],                                                       ["move"])
@@ -342,21 +368,15 @@ def sort_targets(path_to_target,threaded = False):
 
     if threaded:
         sorter.start()  #   Start tasks as separated threads. All exceptions store in Task's _status(Queue()) attribute
-        
-    else:
+    else:   #   Will raise excetion if it has been
         try:
             sorter.sort()   #   Start tasks in main thread.
         except Exception as e:
-            exceptions = e.args[0]
-            for exception in exceptions:
-                print(exception)
+            pass
+        #     exceptions = e.args[0]
+        #     for exception in exceptions:
+        #         print(exception)
 
-    # try:
-    #     task2 = Task("D:/edu/test1")#, Filter("sources", "py", "copy"))
-    #     task2.filters = task.filters
-    #     sorter += task2
-    # except Exception as e:
-    #     pass
 
 if __name__ == "__main__":
     sort_targets("D:/edu/test D:/edu/test1")
