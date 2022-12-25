@@ -237,9 +237,7 @@ class Task(threading.Thread):
         if not path:
             path = self.path
 
-        for name in path.iterdir():
-            pathname = Path(path) / name
-
+        for pathname in path.iterdir():
             try:
                 if pathname.is_dir():
                     if pathname.name in self._filters:  # Exclude destination directories.
@@ -250,13 +248,13 @@ class Task(threading.Thread):
                 elif pathname.is_file():
                     ext = pathname.suffix.replace('.', '').lower()
                     if len(self._ext2filter) == 1 and '*' in self._ext2filter:
-                        filter = self._ext2filter['*']
+                        filter_ = self._ext2filter['*']
                     elif not ext in self._ext2filter and "other" in self._filters:  #   If file extesions not found in filters' list and present Filter("other")
-                        filter = self._filters["other"]
+                        filter_ = self._filters["other"]
                     else:
-                        filter = self._ext2filter[ext]
-                    if filter:
-                        generator = filter(pathname)    #   Call filter.
+                        filter_ = self._ext2filter[ext]
+                    if filter_:
+                        generator = filter_(pathname)    #   Call filter.
                         while True:
                             try:
                                 result = next(generator)
@@ -324,13 +322,13 @@ def sort_targets(path_to_target,threaded = False):
 
     if isinstance(path_to_target, str):
         pathes = path_to_target.split()
-    elif isinstance(path_to_target,list):
+    elif isinstance(path_to_target, list):
         pathes = path_to_target
     else:
         raise ValueError(f"{path} value error.")
     for path in pathes:
         task = Task(path)
-        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked", "move"])
+        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked"])
         task += Filter("audios",    ["wav", "mp3", "ogg", "amr"],                                                       ["move"])
         task += Filter("images",    ["jpeg", "png", "jpg", "svg"],                                                      ["move"])
         task += Filter("videos",    ["avi", "mp4", "mov", "mkv"],                                                       ["move"])
