@@ -1,4 +1,6 @@
 from os import path
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import NestedCompleter
 
 
 class WorkContact:
@@ -86,9 +88,12 @@ class UserInterface:
             raise Warning(command)
 
     @staticmethod
-    def __input_user_text() -> str:
+    def __input_user_text(self) -> str:
         """Просто зчитує текст."""
-        data = input("Please enter what do you want to do: ")
+        commands_completer = self.commands
+        users = {k: None for k in self.book.book}
+        input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
+        data = prompt('"Please enter what do you want to do: ', completer=input_completer)
         return data
 
     @staticmethod
