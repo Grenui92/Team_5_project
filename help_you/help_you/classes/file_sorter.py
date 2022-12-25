@@ -107,7 +107,7 @@ class Filter:
             file_ext    = name.suffix
         
         if self.normalize:
-            file_name = file_name.translate(Filter.translation)
+            file_name = file_name.translate(Filter._translation)
         
         file_name += file_ext
 
