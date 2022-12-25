@@ -327,7 +327,7 @@ def sort_targets(path_to_target,threaded = False):
         raise ValueError(f"{path} value error.")
     for path in pathes:
         task = Task(path)
-        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["UNPACK", "REMOVE_checked"])
+        task += Filter("archives",  ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"] ,                           ["unpack", "move"])
         task += Filter("audios",    ["wav", "mp3", "ogg", "amr"],                                                       ["move"])
         task += Filter("images",    ["jpeg", "png", "jpg", "svg"],                                                      ["move"])
         task += Filter("videos",    ["avi", "mp4", "mov", "mkv"],                                                       ["move"])
@@ -341,9 +341,10 @@ def sort_targets(path_to_target,threaded = False):
         sorter.start()  #   Start tasks as separated threads. All exceptions store in Task's _status(Queue()) attribute
         
     else:
-        # try:
-        sorter.sort()   #   Start tasks in main thread.
-        # except Exception as e:
+        try:
+            sorter.sort()   #   Start tasks in main thread.
+        except Exception as e:
+            pass
         #     exceptions = e.args[0]
         #     for exception in exceptions:
         #         print(exception)
