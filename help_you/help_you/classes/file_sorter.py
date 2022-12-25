@@ -28,7 +28,7 @@ import threading
 
 class Filter:
 
-    translation = None
+    _translation = None
     
     @classmethod
     def make_translation(cls) -> dict:
@@ -166,7 +166,7 @@ class Filter:
                 raise
         return None
 
-Filter.translation = Filter.make_translation()
+    _translation = make_translation()
 
 
 class Task(threading.Thread):
