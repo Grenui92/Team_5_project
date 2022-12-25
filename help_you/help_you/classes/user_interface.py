@@ -1,7 +1,7 @@
 from os import path
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
-
+from decorator import input_error
 
 class WorkContact:
     pass
@@ -61,7 +61,7 @@ class UserInterface:
             self.__show_results(result)
 
     """MAIN"""
-
+    @input_error
     @staticmethod
     def __parse_user_text(text: str) -> list:
         """Обробка тексту. У нас по суті є два типи команд - ті щоскладаються лише з команди, це такі як show_all & delete_all для них створено
@@ -78,6 +78,7 @@ class UserInterface:
         else:
             return [data[0], data[1], data[2:]]
 
+    @input_error
     def __handler(self, command: str, name: str, data) -> str | list:
         """Перевірка команди на наявність в нашому словнику і відповідно виклик функції, якщо команда існує, або рейз помилки. Ця помилка обрана,
         щоб відокремитися від KeyError. Коли декоратор ловить цей Warning - він має запускати процес аналізу і підказки команд."""
@@ -87,7 +88,7 @@ class UserInterface:
         else:
             raise Warning(command)
 
-
+    @input_error
     def __input_user_text(self) -> str:
         """Просто зчитує текст."""
         commands_completer = self.commands
@@ -96,6 +97,7 @@ class UserInterface:
         data = prompt('"Please enter what do you want to do: ', completer=input_completer)
         return data
 
+    @input_error
     @staticmethod
     def __show_results(result: str | list):
         """Виводить результат запросу користувача. Вдалий чи не вдалий - все одно виводить. Навіть декоратор якщо ловить помилку - він не принтує
@@ -107,6 +109,7 @@ class UserInterface:
         else:
             print(result)
 
+    @input_error
     def __good_bye(self, *_):
         print(self.book.save_to_file())
         print(self.notes.save_to_file())
@@ -120,6 +123,7 @@ class UserInterface:
                "'file' - to read about FileSorter.\n" \
                "Or use 'exit' if you want to leave."
 
+    @input_error
     @staticmethod
     def __instructions(category: str, *_) -> str:
         """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
@@ -141,6 +145,7 @@ class UserInterface:
 
     """FILE SORTER"""
 
+    @input_error
     @staticmethod
     def __file_sorter(path_for_sorting: str, *_):
         one_time = FileSorter(path_for_sorting)
