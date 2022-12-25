@@ -30,8 +30,8 @@ class Filter:
 
     _translation = None
     
-    @classmethod
-    def make_translation(cls) -> dict:
+    @staticmethod
+    def make_translation() -> dict:
         """Create translation table from cyrillic to latin. Also replace all other character with symbol - '_' except digits"""
         translation_table = {}
         latin = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
