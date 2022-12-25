@@ -28,7 +28,7 @@ import threading
 
 class Filter:
 
-    translation = None
+    _translation = None
     
     @classmethod
     def make_translation(cls) -> dict:
@@ -107,7 +107,7 @@ class Filter:
             file_ext    = name.suffix
         
         if self.normalize:
-            file_name = file_name.translate(Filter.translation)
+            file_name = file_name.translate(Filter._translation)
         
         file_name += file_ext
 
@@ -166,7 +166,7 @@ class Filter:
                 raise
         return None
 
-Filter.translation = Filter.make_translation()
+    _translation = make_translation()
 
 
 class Task(threading.Thread):
