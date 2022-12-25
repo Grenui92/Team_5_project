@@ -2,6 +2,7 @@ from collections import UserDict
 import pickle
 from datetime import datetime
 from re import search, IGNORECASE
+from os import path
 
 
 class Field:
@@ -27,14 +28,16 @@ class Phone(Field):
     def verify_phone(value):
         phone = search(r'(^\d{12}$)|(^0\d{9}$)', value)
         if phone:
-            return phone
+            if len(phone.string) == 12:
+                return f"+{phone.string}"
+            elif len(phone.string) == 10:
+                return f"+38{phone.string}"
         else:
-            raise ValueError("Phone number must be 12 or 10 digits")
+            raise ValueError("Phone number must be just 12 or 10 digits")
 
     @Field.value.setter
     def value(self, value):
-        self.verify_phone(value)
-        self._value = value
+        self._value = self.verify_phone(value)
 
 
 class Email(Field):
@@ -51,8 +54,7 @@ class Email(Field):
 
     @Field.value.setter
     def value(self, value):
-        self.verify_email(value)
-        self._value = value
+        self._value = self.verify_email(value)
 
 
 class Birthday(Field):
@@ -90,51 +92,18 @@ class Address(Field):
 
     @Field.value.setter
     def value(self, value):
-        self.verify_address(value)
-        self._value = value
-
-
-class Note:
-    def __init__(self, name=None, tags=None, text=None):
-        self.name = ""
-        self.tags = []
-        self.text = ""
-
-    def add_content(self):
-        pass
-
-    def clear_text(self):
-        pass
-
-    def clear_tags(self):
-        pass
+        self._value = self.verify_address(value)
 
 
 class Record:
-    def __init__(self, name: str, phone=None, email=None, address=None, birthday=None, note=None):
+    def __init__(self, name: str, phone=None, email=None, address=None, birthday=None):
         self.name = Name(name)
-        self.phones = []
-        self.emails = []
-        self.addresses = []
-        self.birthday = None
-        self.note = None
+        self.phones = [Phone(phone)] if phone else []
+        self.emails = [Email(email)] if email else []
+        self.addresses = [Address(address)] if address else []
+        self.birthday = Birthday(birthday) if birthday else None
 
-        if phone:
-            self.add_phone(phone)
-
-        if birthday:
-            self.set_birthday(birthday)
-
-        if email:
-            self.add_email(email)
-
-        if address:
-            self.add_address(address)
-
-        if note:
-            self.add_note(note)
-
-    def add_phone(self, new_phone):
+    def add_phone(self, new_phone: str):
         """Додавання номеру телефону. Проходить перевірку дублікатів при наявності інших номерів """
 
         new_phone = Phone(new_phone)
@@ -143,14 +112,16 @@ class Record:
             return f"Phone '{new_phone}' is added"
         else:
             for phone in self.phones:
-                if phone.value != new_phone.value:
-                    self.phones.append(new_phone)
-                    return f"Phone '{new_phone}' is added"
-                else:
-                    return f"Phone '{new_phone}' already exist in Contact. Try again!"
+                if phone.value == new_phone.value:
+                    return f"Phone {new_phone.value} already exist."
+            self.phones.append(new_phone)
+            return f"Phone {new_phone} successfully added to contact {self.name}"
 
-    def change_phone(self, old_phone, new_phone):
-        """Зміна номеру телефону на новий """
+    def change_phone(self, old_phone: str, new_phone: str):
+        """Зміна номеру телефону на новий"""
+
+        old_phone = Phone.verify_phone(old_phone)
+        new_phone = Phone.verify_phone(new_phone)
 
         for phone in self.phones:
             if phone.value == old_phone:
@@ -158,15 +129,16 @@ class Record:
                 return f"Phone '{old_phone}' is changed"
         return f"Phone '{old_phone}' is not in AddressBook. Try again!"
 
-    def remove_phone(self, del_phone):
+    def remove_phone(self, del_phone: str):
         """Видалення номеру телефону """
+
         for phone in self.phones:
-            if phone == del_phone:
+            if phone.value == del_phone:
                 self.phones.remove(phone)
                 return f"Phone '{del_phone}' is delete"
         return f"Phone '{del_phone}' is not in AddressBook. Try again!"
 
-    def set_birthday(self, birthday):
+    def set_birthday(self, birthday: str):
         """Встановлення дати народження """
 
         if self.birthday:
@@ -175,11 +147,11 @@ class Record:
             self.birthday = Birthday(birthday)
             return f"Date of birthday is added to the contact '{self.name}'"
 
-    def change_birthday(self, new_birth):
+    def change_birthday(self, new_birthday):
         """Зміна дати народження """
 
-        self.birthday = new_birth
-        return f"Date of birthday '{self.name}' is changed: '{new_birth}'"
+        self.birthday = new_birthday
+        return f"Date of birthday '{self.name}' is changed: '{new_birthday}'"
 
     def remove_birthday(self):
         """Видалення дати народження контакту """
@@ -188,7 +160,7 @@ class Record:
             return f"Date of birthday is deleted"
         return f"This contact does not have a date of birth"
 
-    def add_email(self, new_email):
+    def add_email(self, new_email: str):
         """Додавання електронної пошти контакту. Проходить перевірку дублікатів при наявності інших e-mail """
 
         new_email = Email(new_email)
@@ -197,13 +169,12 @@ class Record:
             return f"Email '{new_email}' is added"
         else:
             for email in self.emails:
-                if email.value != new_email.value:
-                    self.emails.append(new_email)
-                    return f"E-mail '{new_email}' is added"
-                else:
+                if email.value == new_email.value:
                     return f"E-mail '{new_email}' already exist in AddressBook. Try again!"
+            self.emails.append(new_email)
+            return f"E-mail '{new_email}' is added"
 
-    def change_email(self, old_email, new_email):
+    def change_email(self, old_email: str, new_email: str):
         """Заміна електронної пошти контакту """
 
         for email in self.emails:
@@ -212,16 +183,16 @@ class Record:
                 return f"E-mail '{old_email}' is changed"
         return f"E-mail '{old_email}' is not in AddressBook. Try again!"
 
-    def remove_email(self, del_email):
+    def remove_email(self, del_email: str):
         """Видалення електронної пошти контакту """
 
         for email in self.emails:
-            if email == del_email:
-                self.phones.remove(email)
+            if email.value == del_email:
+                self.emails.remove(email)
                 return f"E-mail '{del_email}' is delete"
         return f"E-mail '{del_email}' is not in AddressBook. Try again!"
 
-    def add_address(self, new_address):
+    def add_address(self, new_address: str):
         """Додавання адреси контакту. Проходить перевірку дублікатів при наявності інших адрес """
 
         new_address = Address(new_address)
@@ -230,13 +201,12 @@ class Record:
             return f"Address '{new_address}' is added"
         else:
             for address in self.addresses:
-                if address.value != new_address.value:
-                    self.addresses.append(new_address)
-                    return f"Address '{new_address}' is added"
-                else:
+                if address.value == new_address.value:
                     return f"Address '{new_address}' already exist in AddressBook. Try again!"
+            self.addresses.append(new_address)
+            return f"Address '{new_address}' is added"
 
-    def change_address(self, old_address, new_address):
+    def change_address(self, old_address: str, new_address: str):
         """Заміна адреси контакту """
 
         for address in self.addresses:
@@ -245,7 +215,7 @@ class Record:
                 return f"Address '{old_address}' is changed"
         return f"Address '{old_address}' is not in AddressBook. Try again!"
 
-    def remove_address(self, del_address):
+    def remove_address(self, del_address: str):
         """Видалення адреси контакту """
         for address in self.addresses:
             if address == del_address:
@@ -259,9 +229,6 @@ class Record:
         birthday = self.birthday.value.replace(year=today.year)
         delta = (birthday - today).days if birthday > today else (birthday.replace(birthday.year + 1) - today).days
         return delta
-
-    def add_note(self, note):
-        pass
 
     def edit_information_contact(self, command, field, val):
         """"Редагування(заміна ти видалення) полів контакту"""
@@ -313,21 +280,20 @@ class Record:
 
 
 class ContactBook(UserDict):
-    def __init__(self, file_path=None):
+    def __init__(self):
         super().__init__()
-        self.file_path = ""
-        self.count = 0
+        self.file_path = path.join("save", "contact_book.bin")
 
-    def iterator(self, n):
+    def iterator(self, n: int):
         """Пагінація - посторінковий вивід Контактної книги """
-
-        contacts_in_page = list(self.data.keys())
-        if self.count >= len(contacts_in_page):
-            raise StopIteration("This is the end of ContactBook")
-        result_list = contacts_in_page[self.count: min(self.count + n, len(contacts_in_page))]
-        for i in result_list:
-            self.count += 1
-        yield result_list
+        page = []
+        for i in self.data.keys():
+            page.append(i)
+            if len(page) == n:
+                yield page
+                page = []
+        if page:
+            yield page
 
     def save_to_file(self):
         """Збереження Книги контактів у бінарний файл """
