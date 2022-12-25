@@ -37,7 +37,7 @@ class UserInterface:
 
                          "show_birthdays": self.book.show_nearest_birthdays,
                          "days_to_birthday": self.book.days_to_birthday,
-                         "show_all_birthdays": self.book.days_to_birthday_for_all,
+                         "show_days_to_birthday_for_all": self.book.days_to_birthday_for_all,
 
                          "create_note": self.notes.create,
                          "show_note_book": self.notes.show_all,
