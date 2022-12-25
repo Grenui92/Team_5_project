@@ -288,7 +288,10 @@ class Task(threading.Thread):
 
                     #   Remove empty dirs
                     if not self.keep_empty_dir and path.exists() and not any(path.iterdir()):
-                        path.rmdir()
+                        try:
+                            path.rmdir()
+                        except Exception as e:
+                            self._status.put(e)
                     
                 elif is_file:    #   Processing files
                     self._file_processing(path)
