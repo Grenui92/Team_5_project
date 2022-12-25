@@ -27,13 +27,6 @@ class Note:
         self.tags.clear()
         return f"The tags note '{self.name}' is clear"
 
-    def edit_note(self, value):
-        pass
-
-    def edit_note_name(self, old_name: str, new_name: str):
-        pass
-
-
 class NoteBook(UserDict):
     def __init__(self, file_path=None):
         super().__init__()
@@ -58,11 +51,6 @@ class NoteBook(UserDict):
             if search:
                 result.append(f"{self.data[key]}")
         return result
-
-    def sorted_notes_by_tags(self, tags_value: list):
-        """Сортування нотаток за тегами"""
-
-        pass
 
     def iterator(self, n: int):
         """Пагінація - посторінковий вивід Книги нотаток"""
