@@ -1,7 +1,7 @@
 from os import path
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
-from decorator import input_error
+from .decorator import input_error
 
 class WorkContact:
     pass
