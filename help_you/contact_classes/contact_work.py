@@ -1,7 +1,7 @@
-from ..book import Book
+from help_you.book import Book
 from os import path
-from record import Record
-from fields import Phone, Email, Address, Birthday
+from help_you.contact_classes.record import Record
+from help_you.contact_classes.fields import Phone, Email, Address, Birthday
 class WorkContact:
     def __init__(self):
         """При ініціалізації відкриваєм бінарний файл з якого

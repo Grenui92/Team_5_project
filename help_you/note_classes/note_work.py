@@ -1,6 +1,6 @@
-from ..book import Book
+from help_you.book import Book
 from os import path
-from note import Note
+from help_you.note_classes.note import Note
 class WorkNote:
     def __init__(self):
         self.note_book = Book(path.join("database", "notes"))

@@ -2,6 +2,9 @@ from contact_classes.contact_work import WorkContact
 from note_classes.note_work import WorkNote
 from decorator import input_error
 from file_sorter import sort_targets
+from prompt_toolkit.completion import NestedCompleter
+from prompt_toolkit import prompt
+from os import path
 
 book = WorkContact()
 notes = WorkNote()
@@ -43,16 +46,16 @@ def handler(command: str, name: str, data) -> str | list:
     """Перевірка команди на наявність в нашому словнику і відповідно виклик функції, якщо команда існує, або рейз помилки. Ця помилка обрана,
     щоб відокремитися від KeyError. Коли декоратор ловить цей Warning - він має запускати процес аналізу і підказки команд."""
 
-    if command in self.commands:
-        return self.commands[command](name, data)
+    if command in commands:
+        return commands[command](name, data)
     else:
-        raise Warning(command, self.commands.keys())
+        raise Warning(command, commands.keys())
 
 @input_error
 def input_user_text() -> str:
     """Просто зчитує текст."""
-    commands_completer = self.commands
-    users = {k: None for k in self.book.contacts_book}
+    commands_completer = commands
+    users = {k: None for k in book.contacts_book}
     input_completer = NestedCompleter.from_nested_dict(
         {k: users for k in commands_completer})
     data = prompt('"Please enter what do you want to do: ',
@@ -73,8 +76,9 @@ def show_results(result: str | list):
 
 @input_error
 def good_bye(*_):
-    print(self.book.save_to_file())
-    print(self.notes.save_to_file())
+    book.save_to_file()
+    notes.save_to_file()
+    print("NoteBook saved", "ContactBook saved", sep="\n")
     exit("Bye")
 
 
