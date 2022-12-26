@@ -1,5 +1,6 @@
 from os import path
-
+from note_book_classes import NoteBook, Note
+from contact_book_classes import ContactBook, Record
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
