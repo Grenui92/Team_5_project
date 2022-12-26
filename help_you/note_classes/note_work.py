@@ -1,4 +1,12 @@
+from ..book import NoteBook
+from note import Note
+
+from typing import ClassVar
+
+
 class WorkNote:
+    data: ClassVar[NoteBook]
+
     def __init__(self):
         """При ініціалізації відкриваєм бінарний файл з якого
         створюєм новий нотатник. Якщо файл пустий - створюєм
@@ -91,7 +99,7 @@ class WorkNote:
     def search_in(self, *args):
         result = []
         for value in self.data.values():
-            if search_data in (value.name, *value.tags, *value.text.split()):
+            if args[0] in (value.name, *value.tags, *value.text.split()):
                 result.append(value)
         return result
 
