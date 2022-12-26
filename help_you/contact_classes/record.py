@@ -1,4 +1,8 @@
+
 from .fields import Name, Phone, Email, Address, Birthday
+from datetime import datetime
+
+
 class Record:
     def __init__(self, name: str, phone=None, email=None, address=None, birthday=None):
         self.name = Name(name)
@@ -31,8 +35,8 @@ class Record:
     def change_phone(self, old_phone: str, new_phone: str):
         """Зміна номеру телефону на новий"""
 
-        old_phone = Phone.verify_phone(old_phone)
-        new_phone = Phone.verify_phone(new_phone)
+        old_phone = Phone(old_phone)
+        new_phone = Phone(new_phone)
 
         for phone in self.phones:
             if phone.value == old_phone:
@@ -43,7 +47,7 @@ class Record:
     def remove_phone(self, del_phone: str):
         """Видалення номеру телефону """
 
-        del_phone = Phone.verify_phone(del_phone)
+        del_phone = Phone(del_phone)
         for phone in self.phones:
             if phone.value == del_phone:
                 self.phones.remove(phone)
@@ -55,9 +59,8 @@ class Record:
 
         if isinstance(self.birthday, Birthday):
             return f"The date of birthday already exist in contact '{self.name.value}'"
-        else:
-            self.birthday = Birthday(birthday)
-            return f"Date of birthday is added to the contact '{self.name.value}'"
+        self.birthday = Birthday(birthday)
+        return f"Date of birthday is added to the contact '{self.name.value}'"
 
     def change_birthday(self, new_birthday):
         """Зміна дати народження """
@@ -79,12 +82,12 @@ class Record:
         if not self.emails:
             self.emails.append(new_email)
             return f"Email '{new_email.value}' is added"
-        else:
-            for email in self.emails:
-                if email.value == new_email.value:
-                    return f"E-mail '{new_email.value}' already exist in AddressBook. Try again!"
-            self.emails.append(new_email)
-            return f"E-mail '{new_email.value}' is added"
+
+        for email in self.emails:
+            if email.value == new_email.value:
+                return f"E-mail '{new_email.value}' already exist in AddressBook. Try again!"
+        self.emails.append(new_email)
+        return f"E-mail '{new_email.value}' is added"
 
     def change_email(self, old_email: str, new_email: str):
         """Заміна електронної пошти контакту """
@@ -111,12 +114,11 @@ class Record:
         if not self.addresses:
             self.addresses.append(new_address)
             return f"Address '{new_address.value}' is added"
-        else:
-            for address in self.addresses:
-                if address.value == new_address.value:
-                    return f"Address '{new_address.value}' already exist in AddressBook. Try again!"
-            self.addresses.append(new_address)
-            return f"Address '{new_address.value}' is added"
+        for address in self.addresses:
+            if address.value == new_address.value:
+                return f"Address '{new_address.value}' already exist in AddressBook. Try again!"
+        self.addresses.append(new_address)
+        return f"Address '{new_address.value}' is added"
 
     def change_address(self, old_address: str, new_address: str):
         """Заміна адреси контакту """
@@ -167,6 +169,3 @@ class Record:
                     point.remove(old)
                     return f"{old} successfully deleted from {field}"
             raise KeyError(f"I can't find old value {old}")
-
-
-

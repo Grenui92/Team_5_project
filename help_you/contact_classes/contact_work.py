@@ -4,9 +4,13 @@ from .fields import Phone, Email, Address, Birthday
 from .record import Record
 
 from book import Book
+from typing import ClassVar
+
 
 
 class WorkContact:
+    data: ClassVar[ContactBook]
+
     def __init__(self):
         """При ініціалізації відкриваєм бінарний файл з якого
         створюєм нову книжку. Якщо файл пустий - створюєм
@@ -90,7 +94,7 @@ class WorkContact:
 
     def search_in(self, search_data):
 
-        """Пошук заданого фрагмента у нотатках"""
+        """Пошук заданого фрагмента у контактах"""
         result = []
         for value in self.contacts_book.values():
             if search_data in (value.name.value,

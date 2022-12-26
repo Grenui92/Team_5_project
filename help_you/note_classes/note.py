@@ -1,8 +1,3 @@
-import pickle
-from collections import UserDict
-from os import path
-
-
 class Note:
     def __init__(self, name: str, tags: list, text: str):
         self.name = name
@@ -34,6 +29,3 @@ class Note:
 
         self.tags.clear()
         return f"The tags note '{self.name}' is clear"
-
-
-

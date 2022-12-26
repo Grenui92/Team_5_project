@@ -1,7 +1,13 @@
 from book import Book
 from os import path
-from note_classes.note import Note
+from .note import Note
+from typing import ClassVar
+
+
+
 class WorkNote:
+    data: ClassVar[NoteBook]
+
     def __init__(self):
         self.note_book = Book(path.join("database", "notes"))
         try:
@@ -90,6 +96,7 @@ class WorkNote:
 
     def search_in(self, search_data, *_):
         result = []
+
         for value in self.note_book.values():
             if search_data in (value.name, *value.tags, *value.text.split()):
                 result.append(value)
