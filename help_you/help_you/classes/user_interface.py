@@ -83,6 +83,8 @@ class WorkNote:
         except IndexError:
             raise IndexError("You can't edit note without new information.")
         note: Note = self.note_book.data[name]
+        note.clear_text()
+        note.clear_tags()
         return note.add_to_note(" ".join(values))
 
     def edit_name(self, *args):
