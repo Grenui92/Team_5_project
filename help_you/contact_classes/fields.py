@@ -63,12 +63,12 @@ class Birthday(Field):
 
         birthday = search(r"^\d{1,2}\.\d{1,2}\.\d{4}$", value)
         if not birthday:
-            raise ValueError("Invalid format birthday")
+            raise ValueError("Invalid format birthday. Program wait dd.mm.yyyy format. Try again.")
         else:
             today = datetime.now().date()
             birthday = datetime.strptime(value, "%d.%m.%Y").date()
             if birthday > today:
-                raise ValueError("That date has not yet come")
+                raise ValueError("That date has not yet come.")
             else:
                 return birthday
 
@@ -81,12 +81,11 @@ class Address(Field):
     @staticmethod
     def normalize_address(value):
         """Верифікація введеної адреси. Повинна складатися мінімум з 2 символів """
-        print(value)
         address = search(r'^[a-z0-9,-/ ]+$', value)
         if address:
             return address.group()
         else:
-            raise ValueError("Аddress must be longer than 1 letter")
+            raise ValueError("Address must be longer than 1 letter")
 
     @Field.value.setter
     def value(self, value):
