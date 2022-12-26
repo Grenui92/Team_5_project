@@ -25,12 +25,11 @@ class Record:
         if not self.phones:
             self.phones.append(new_phone)
             return f"Phone '{new_phone.value}' is added"
-        else:
-            for phone in self.phones:
-                if phone.value == new_phone.value:
-                    return f"Phone {new_phone.value} already exist."
-            self.phones.append(new_phone)
-            return f"Phone {new_phone.value} successfully added to contact {self.name.value}"
+        for phone in self.phones:
+            if phone.value == new_phone.value:
+                return f"Phone {new_phone.value} already exist."
+        self.phones.append(new_phone)
+        return f"Phone {new_phone.value} successfully added to contact {self.name.value}"
 
     def change_phone(self, old_phone: str, new_phone: str):
         """Зміна номеру телефону на новий"""

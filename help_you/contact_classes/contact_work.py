@@ -9,7 +9,6 @@ from typing import ClassVar
 
 
 class WorkContact:
-    data: ClassVar[ContactBook]
 
     def __init__(self):
         """При ініціалізації відкриваєм бінарний файл з якого

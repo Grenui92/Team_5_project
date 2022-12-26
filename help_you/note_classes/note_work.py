@@ -6,7 +6,6 @@ from typing import ClassVar
 
 
 class WorkNote:
-    data: ClassVar[NoteBook]
 
     def __init__(self):
         self.note_book = Book(path.join("database", "notes"))
