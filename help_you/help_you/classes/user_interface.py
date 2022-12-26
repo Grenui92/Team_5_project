@@ -26,15 +26,15 @@ class WorkNote:
             self.note_book.load_from_file()
         else:
             self.note_book.data.update({name: Note(name=name,
-                                        text=text,
-                                        tags=self.search_tags(text))})
+                                                   text=text,
+                                                   tags=self.search_tags(text))})
 
         return f"{str(self.note_book.data[name])}"
 
     def show_all(self):
         all_notes = ''
         for note in self.note_book.data.values():
-            all_notes.join(str(note)+'\n')
+            all_notes.join(str(note) + '\n')
 
         return all_notes if all_notes else 'Notes is empty'
 
@@ -46,7 +46,7 @@ class WorkNote:
     def show_page(self, *args):
         """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
         n = args[0]
-        page_count = n+1
+        page_count = n + 1
         page_iterator = self.note_book.iterator(n)
         splited_notes = 'notes:\n'
 
@@ -199,13 +199,13 @@ class WorkContact():
 
     def show_one(self, *args: list) -> str:
         name = args[0]
-        return f'{name}: {str(self.contacts_book.data[name])}' if name in self.contacts_book.data\
+        return f'{name}: {str(self.contacts_book.data[name])}' if name in self.contacts_book.data \
             else f'Contact {name} is not founded'
 
     def show_page(self, *args):
         """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
         n = args[0]
-        page_count = n+1
+        page_count = n + 1
         page_iterator = self.contacts_book.iterator(n)
         splited_contacts = 'Contacts:\n'
 
@@ -405,10 +405,8 @@ class UserInterface:
         """Просто зчитує текст."""
         commands_completer = self.commands
         users = {k: None for k in self.book.book}
-        input_completer = NestedCompleter.from_nested_dict(
-            {k: users for k in commands_completer})
-        data = prompt('"Please enter what do you want to do: ',
-                      completer=input_completer)
+        input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
+        data = prompt('"Please enter what do you want to do: ', completer=input_completer)
         return data
 
     @staticmethod
