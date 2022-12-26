@@ -152,10 +152,12 @@ class UserInterface:
 
     @staticmethod
     @input_error
-    def __file_sorter(path_for_sorting: str, path_for_sorting_2: str):
+    def __file_sorter(path_for_sorting: str, path_for_sorting_2: list):
         if path_for_sorting_2:
-            sort_targets([path_for_sorting, path_for_sorting_2[0]])
+            sort_targets([path_for_sorting, *path_for_sorting_2])
+            return f"Folders {path_for_sorting} and {','.join(path_for_sorting_2)} successfully sorted."
         else:
             sort_targets(path_for_sorting)
+            return f"Folder {path_for_sorting} successfully sorted."
 
     """END FILE SORTER"""
