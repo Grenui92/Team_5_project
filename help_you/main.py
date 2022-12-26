@@ -23,18 +23,12 @@ def main():
         result = handler(command=command, name=name, data=data)
         show_results(result)
 
-"""MAIN"""
-
 
 @input_error
 def parse_user_text(text: str) -> list:
-    """Обробка тексту. У нас по суті є два типи команд - ті щоскладаються лише з команди, це такі як show_all & delete_all для них створено
-    іф. Хендлер зажди приймає три параметри й щоб не робити зайвих перевірок і іншого - ми в нього завжди будемо передавати три аргументи,
-    просто коли потрібно вони будуть порожні, а в методах не потрібні аргументи можна ховати просто в *_, другий тип - це ті в
-    яких вже йде більше інформації. Як бачите - елемент з першим індексом це завжди команда. Він завжди існує. Другий елемент - це ім'я в 90%
-    випадків. Лише у команді show_pages другий елемент буде не ім'я запису з яким ми взаємодіємо, а цифра кількості користувачів на сторінці.
-    Треба мати це на увазі.
-    У аргументі дата зберігається все інше. Це список, звідти можна витягнути все що завгодно по індексу."""
+    """Обробка тексту. Поділяє текст на три частини, у разі виклику юзером команди яка не потребує аргументів - повертає все одно список
+    з трьох елементів, щоб виклик всіх команд був однаковий."""
+
     data = text.split()
     if len(data) == 1:
         return [data[0], "", ""]
@@ -136,9 +130,9 @@ commands = {"help": help_me,
                      "edit_contact_name": book.edit_name,
                      "search_in_contacts": book.search_in,
 
-                     "show_birthdays": book.show_nearest_birthdays,
-                     "days_to_birthday": book.days_to_birthday_for_one,
-                     "show_days_to_birthday_for_all": book.days_to_birthday_for_all,
+                     "show_nearest_birthdays": book.show_nearest_birthdays,
+                     "days_to_birthday_for_one": book.days_to_birthday_for_one,
+                     "days_to_birthday_for_all": book.days_to_birthday_for_all,
 
                      "create_note": notes.create,
                      "show_note_book": notes.show_all,
