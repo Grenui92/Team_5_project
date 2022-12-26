@@ -193,16 +193,19 @@ class WorkContact:
             f"Contact {name} is not in book"
 
     def add_values(self, *args):
-        name = args[0]
-        field = args[1][0]
-        value = args[1][1]
+        try:
+            name = args[0]
+            field = args[1][0]
+            value = args[1][1:]
+        except IndexError:
+            raise IndexError("Not enough information.")
 
         records_fields_methods = {'phones': self.contacts_book.data[name].add_phone,
                                   'emails': self.contacts_book.data[name].add_email,
-                                  'address': self.contacts_book.data[name].add_address,
+                                  'addresses': self.contacts_book.data[name].add_address,
                                   'birthday': self.contacts_book.data[name].set_birthday
                                   }
-        return records_fields_methods[field](value)
+        return records_fields_methods[field](" ".join(list(value)))
 
     def search_in(self, *args: list):
         if args[0]:
