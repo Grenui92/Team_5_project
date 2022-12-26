@@ -1,4 +1,4 @@
-from .contact_classes.fields import Name, Phone, Email, Address, Birthday
+from .fields import Name, Phone, Email, Address, Birthday
 class Record:
     def __init__(self, name: str, phone=None, email=None, address=None, birthday=None):
         self.name = Name(name)
