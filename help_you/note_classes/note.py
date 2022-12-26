@@ -6,7 +6,7 @@ class Note:
 
     def __str__(self):
         return f"Note Name: {self.name}\n" \
-               f"\tNote tags: {[tag for tag in self.tags] if self.tags else self.tags}\n" \
+               f"\tNote tags: {[tag for tag in self.tags] if self.tags else 'Empty'}\n" \
                f"\tNote text: {self.text}"
 
     def add_to_note(self, text: str):
