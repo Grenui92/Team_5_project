@@ -38,20 +38,20 @@ class Record:
         new_phone = Phone(new_phone)
 
         for phone in self.phones:
-            if phone.value == old_phone:
-                phone.value = new_phone
-                return f"Phone '{old_phone}' is changed"
-        return f"Phone '{old_phone}' is not in AddressBook. Try again!"
+            if phone.value == old_phone.value:
+                phone.value = new_phone.value
+                return f"Phone '{old_phone.value}' is changed"
+        return f"Phone '{old_phone.value}' is not in AddressBook. Try again!"
 
     def remove_phone(self, del_phone: str):
         """Видалення номеру телефону """
 
         del_phone = Phone(del_phone)
         for phone in self.phones:
-            if phone.value == del_phone:
+            if phone.value == del_phone.value:
                 self.phones.remove(phone)
-                return f"Phone '{del_phone}' is delete"
-        return f"Phone '{del_phone}' is not in AddressBook. Try again!"
+                return f"Phone '{del_phone.value}' is delete"
+        return f"Phone '{del_phone.value}' is not in AddressBook. Try again!"
 
     def set_birthday(self, birthday: str):
         """Встановлення дати народження """
@@ -65,7 +65,7 @@ class Record:
         """Зміна дати народження """
 
         self.birthday = new_birthday
-        return f"Date of birthday '{self.name}' is changed: '{new_birthday}'"
+        return f"Date of birthday '{self.name.value}' is changed: '{new_birthday}'"
 
     def remove_birthday(self):
         """Видалення дати народження контакту """
@@ -140,8 +140,7 @@ class Record:
         """Визначення кількості днів до дня народження """
         today = datetime.now().date()
         birthday = self.birthday.value.replace(year=today.year)
-        delta = (birthday - today).days if birthday > today else (
-                birthday.replace(birthday.year + 1) - today).days
+        delta = (birthday - today).days if birthday > today else (birthday.replace(birthday.year + 1) - today).days
         return delta
 
     def edit_information_contact(self, command, field, val):
@@ -157,7 +156,7 @@ class Record:
                 if old == entry.value:
                     entry.value = new
                     return f"{old} successfully changed to {new}"
-            raise KeyError(f"I can't find old value {old}")
+            return f"I can't find old value {old}"
         if command == "del":
             if field == "birthday":
                 self.birthday = "Birthday not set"
@@ -167,4 +166,4 @@ class Record:
                 if old == entry.value:
                     point.remove(old)
                     return f"{old} successfully deleted from {field}"
-            raise KeyError(f"I can't find old value {old}")
+            return f"I can't find old value {old}"
