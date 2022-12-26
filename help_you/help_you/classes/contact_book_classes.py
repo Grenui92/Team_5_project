@@ -107,7 +107,7 @@ class Record:
     def __str__(self):
         return f"Name: {self.name.value}\n" \
                f"\tphones: {[phone.value for phone in self.phones] if self.phones else self.phones}\n" \
-               f"\temailsasdasd: {[email.value for email in self.emails] if self.emails else self.emails}\n" \
+               f"\temails: {[email.value for email in self.emails] if self.emails else self.emails}\n" \
                f"\taddress: {[address.value for address in self.addresses] if self.addresses else self.addresses}\n" \
                f"\tbirthday: {self.birthday.value if isinstance(self.birthday, Birthday) else self.birthday}"
 
