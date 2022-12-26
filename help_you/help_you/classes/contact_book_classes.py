@@ -109,10 +109,10 @@ class Record:
         string = f'name: {self.name.value}\n\
                     phones: {[phone.value for phone in self.phones]}\n\
                     emails: {[email.value for email in self.emails]}\n\
-                    birthday: {self.birthday.value}\n\
-                    notes: \nnote:{self.note.name}\n\
-                            text:{self.note.text}\n\
-                            tags:{self.note.tags}'
+                    birthday: {self.birthday.value}\n\''
+        # notes: \nnote:{self.note.name}\n\
+        #         text:{self.note.text}\n\
+        #         tags:{self.note.tags}'
         return string
 
     def add_phone(self, new_phone: str):
