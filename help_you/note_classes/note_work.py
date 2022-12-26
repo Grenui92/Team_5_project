@@ -1,17 +1,15 @@
-from ..book import NoteBook
-from note import Note
-
+from book import Book
+from os import path
+from .note import Note
 from typing import ClassVar
+
 
 
 class WorkNote:
     data: ClassVar[NoteBook]
 
     def __init__(self):
-        """При ініціалізації відкриваєм бінарний файл з якого
-        створюєм новий нотатник. Якщо файл пустий - створюєм
-        порожній"""
-        self.note_book = NoteBook()
+        self.note_book = Book(path.join("database", "notes"))
         try:
             self.note_book.load_from_file()
         except FileNotFoundError:
@@ -96,10 +94,11 @@ class WorkNote:
         del self.note_book[name]
         return f"{name}'s name has been changed to {new_name}"
 
-    def search_in(self, *args):
+    def search_in(self, search_data, *_):
         result = []
-        for value in self.data.values():
-            if args[0] in (value.name, *value.tags, *value.text.split()):
+
+        for value in self.note_book.values():
+            if search_data in (value.name, *value.tags, *value.text.split()):
                 result.append(value)
         return result
 

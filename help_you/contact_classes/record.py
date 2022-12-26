@@ -1,5 +1,5 @@
-from fields import Name, Phone, Birthday, Email, Address
 
+from .fields import Name, Phone, Email, Address, Birthday
 from datetime import datetime
 
 

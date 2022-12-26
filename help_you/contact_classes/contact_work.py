@@ -1,8 +1,11 @@
-from ..book import ContactBook
-from record import Record
-from fields import Phone, Email, Address, Birthday
+from os import path
 
+from .fields import Phone, Email, Address, Birthday
+from .record import Record
+
+from book import Book
 from typing import ClassVar
+
 
 
 class WorkContact:
@@ -12,7 +15,7 @@ class WorkContact:
         """При ініціалізації відкриваєм бінарний файл з якого
         створюєм нову книжку. Якщо файл пустий - створюєм
         порожню книжку"""
-        self.contacts_book = ContactBook()
+        self.contacts_book = Book(path.join("database", "contacts"))
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:
@@ -89,12 +92,12 @@ class WorkContact:
                                   }
         return records_fields_methods[field](" ".join(list(value)))
 
-    def search_in(self, *args: list):
+    def search_in(self, search_data):
 
         """Пошук заданого фрагмента у контактах"""
         result = []
-        for value in self.data.values():
-            if args[0] in (value.name.value,
+        for value in self.contacts_book.values():
+            if search_data in (value.name.value,
                                *[phone.value for phone in value.phones if isinstance(phone, Phone)],
                                *[email.value for email in value.emails if isinstance(email, Email)],
                                *[address.value for address in value.addresses if isinstance(address, Address)],
@@ -139,7 +142,6 @@ class WorkContact:
         name = args[0]
         new_name = args[1]
         if new_name in self.contacts_book.data:
-            self.contacts_book.data[new_name] = self.contacts_book.data.pop[name]
             return f"{name}'s name has been changed to {new_name}"
         else:
             return f'{name} not in contacts'
