@@ -46,11 +46,13 @@ class Email(Field):
     def verify_email(value):
         """Верифікація введеного e-mail користувача"""
 
-        email = search(r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
+        email = search(
+            r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
         if email:
             return email
         else:
-            raise ValueError("Е-mail must contain letters, numbers and symbols [._-]")
+            raise ValueError(
+                "Е-mail must contain letters, numbers and symbols [._-]")
 
     @Field.value.setter
     def value(self, value):
@@ -102,6 +104,13 @@ class Record:
         self.emails = [Email(email)] if email else []
         self.addresses = [Address(address)] if address else []
         self.birthday = Birthday(birthday) if birthday else None
+
+    def __str__(self):
+        return f'name:{self.name.value}\n\
+                phones: {[phone.value for phone in self.phones]}\n\
+                emails: {[email.value for email in emails]}\n\
+                address: {[address.value for address in self.addresses]}\n\
+                birthday: {self.birthday.value}'
 
     def add_phone(self, new_phone: str):
         """Додавання номеру телефону. Проходить перевірку дублікатів при наявності інших номерів """
@@ -228,7 +237,8 @@ class Record:
         """Визначення кількості днів до дня народження """
         today = datetime.now().date()
         birthday = self.birthday.value.replace(year=today.year)
-        delta = (birthday - today).days if birthday > today else (birthday.replace(birthday.year + 1) - today).days
+        delta = (birthday - today).days if birthday > today else (
+            birthday.replace(birthday.year + 1) - today).days
         return delta
 
     def edit_information_contact(self, command, field, val):
@@ -259,7 +269,8 @@ class Record:
         elif command == "del":
             for i in val:
                 phone = (
-                    self.remove_phone(val[0]) if Phone.verify_phone(val[0]) else None
+                    self.remove_phone(val[0]) if Phone.verify_phone(
+                        val[0]) else None
                 )
                 birthday = (
                     self.remove_birthday()
