@@ -9,13 +9,19 @@ class Note:
         self.tags = tags
         self.text = text
 
+    def __str__(self):
+        return f"Note Name: {self.name}\n" \
+               f"\tNote tags: {[tag for tag in self.tags] if self.tags else self.tags}\n" \
+               f"\tNote text: {self.text}"
+
+
     def add_to_note(self, text: str):
         """Додавання тексту до текстового поля нотатки"""
 
         for piece in text:
             if piece.startswith("#"):
                 self.tags.append(piece)
-        self.text += text + " "
+        self.text += " " + text
         return f"The text to note '{self.name}' is added"
 
     def clear_text(self):
@@ -38,8 +44,6 @@ class NoteBook(UserDict):
 
     def search_in_notes(self, search_data: str | list):
         """Пошук заданого фрагмента у нотатках"""
-        if isinstance(search_data, str):
-            search_data = list(search_data)
         result = []
         for value in self.data.values():
             if search_data in (value.name, *value.tags, *value.text.split()):

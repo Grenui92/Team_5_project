@@ -1,8 +1,8 @@
-from collections import UserDict
 import pickle
+from collections import UserDict
 from datetime import datetime
-from re import search, IGNORECASE
 from os import path
+from re import findall, IGNORECASE, search
 
 
 class Field:
@@ -46,10 +46,9 @@ class Email(Field):
     def verify_email(value):
         """Верифікація введеного e-mail користувача"""
 
-        email = search(
-            r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
+        email = search(r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
         if email:
-            return email
+            return email.group()
         else:
             raise ValueError(
                 "Е-mail must contain letters, numbers and symbols [._-]")
@@ -88,7 +87,7 @@ class Address(Field):
 
         address = search(r'^[a-z0-9,-/]{2,}$', value)
         if address:
-            return address
+            return address.group()
         else:
             raise ValueError("Аddress must be longer than 1 letter")
 
@@ -103,14 +102,14 @@ class Record:
         self.phones = [Phone(phone)] if phone else []
         self.emails = [Email(email)] if email else []
         self.addresses = [Address(address)] if address else []
-        self.birthday = Birthday(birthday) if birthday else None
+        self.birthday = Birthday(birthday) if birthday else "Birthday not set"
 
     def __str__(self):
-        return f'name:{self.name.value}\n\
-                phones: {[phone.value for phone in self.phones]}\n\
-                emails: {[email.value for email in emails]}\n\
-                address: {[address.value for address in self.addresses]}\n\
-                birthday: {self.birthday.value}'
+        return f"Name: {self.name.value}\n" \
+               f"\tphones: {[phone.value for phone in self.phones] if self.phones else self.phones}\n" \
+               f"\temailsasdasd: {[email.value for email in self.emails] if self.emails else self.emails}\n" \
+               f"\taddress: {[address.value for address in self.addresses] if self.addresses else self.addresses}\n" \
+               f"\tbirthday: {self.birthday.value if isinstance(self.birthday, Birthday) else self.birthday}"
 
     def add_phone(self, new_phone: str):
         """Додавання номеру телефону. Проходить перевірку дублікатів при наявності інших номерів """
@@ -151,11 +150,11 @@ class Record:
     def set_birthday(self, birthday: str):
         """Встановлення дати народження """
 
-        if self.birthday:
-            return f"The date of birthday already exist in contact '{self.name}'"
+        if isinstance(self.birthday, Birthday):
+            return f"The date of birthday already exist in contact '{self.name.value}'"
         else:
             self.birthday = Birthday(birthday)
-            return f"Date of birthday is added to the contact '{self.name}'"
+            return f"Date of birthday is added to the contact '{self.name.value}'"
 
     def change_birthday(self, new_birthday):
         """Зміна дати народження """
@@ -238,63 +237,39 @@ class Record:
         today = datetime.now().date()
         birthday = self.birthday.value.replace(year=today.year)
         delta = (birthday - today).days if birthday > today else (
-            birthday.replace(birthday.year + 1) - today).days
+                birthday.replace(birthday.year + 1) - today).days
         return delta
 
     def edit_information_contact(self, command, field, val):
         """"Редагування(заміна ти видалення) полів контакту"""
+        old = val[0]
 
         if command == "change":
-            for i in val:
-                phone = (
-                    self.change_phone(val[0], val[1])
-                    if Phone.verify_phone(val[0]) and Phone.verify_phone(val[1])
-                    else None
-                )
-                birthday = (
-                    self.change_birthday(val[0])
-                    if Birthday.verify_birthday(val[0])
-                    else None
-                )
-                address = (
-                    self.change_address(val[0], val[1])
-                    if Address.verify_address(val[0]) and Address.verify_address(val[1])
-                    else None
-                )
-                email = (
-                    self.change_email(val[0], val[1])
-                    if Email.verify_email(val[0]) and Email.verify_email(val[1])
-                    else None
-                )
-        elif command == "del":
-            for i in val:
-                phone = (
-                    self.remove_phone(val[0]) if Phone.verify_phone(
-                        val[0]) else None
-                )
-                birthday = (
-                    self.remove_birthday()
-                    if Birthday.verify_birthday(val[0])
-                    else None
-                )
-                address = (
-                    self.remove_address(val[0])
-                    if Address.verify_address(val[0])
-                    else None
-                )
-                email = (
-                    self.remove_email(val[0])
-                    if Email.verify_email(val[0])
-                    else None
-                )
-        else:
-            raise ValueError(f"Command '{command}' is missing")
+            new = val[1]
+            if field == "birthday":
+                self.birthday = Birthday(new)
+            point = self.__dict__[field]
+            for entry in point:
+                if old == entry.value:
+                    entry.value = new
+                    return f"{old} successfully changed to {new}"
+            raise KeyError(f"I can't find old value {old}")
+        if command == "del":
+            if field == "birthday":
+                self.birthday = "Birthday not set"
+                return f"Birthday {old} successfully deleted for contact {self.name.value}."
+            point = self.__dict__[field]
+            for entry in point:
+                if old == entry.value:
+                    point.remove(old)
+                    return f"{old} successfully deleted from {field}"
+            raise KeyError(f"I can't find old value {old}")
 
 
 class ContactBook(UserDict):
-    def __init__(self):
+    def __init__(self, file_path=path.join("save", "contact_book")):
         super().__init__()
-        self.file_path = path.join("save", "contact_book.bin")
+        self.file_path = f"{file_path}.bin"
 
     def iterator(self, n: int):
         """Пагінація - посторінковий вивід Контактної книги """
@@ -306,6 +281,18 @@ class ContactBook(UserDict):
                 page = []
         if page:
             yield page
+
+    def search_in_contacts(self, search_data: str | list):
+        """Пошук заданого фрагмента у нотатках"""
+        result = []
+        for value in self.data.values():
+            if search_data in (value.name.value,
+                               *[phone.value for phone in value.phones if isinstance(phone, Phone)],
+                               *[email.value for email in value.emails if isinstance(email, Email)],
+                               *[address.value for address in value.addresses if isinstance(address, Address)],
+                               *[value.birthday.value if isinstance(value.birthday, Birthday) else "Bimba"]):
+                result.append(value)
+        return result
 
     def save_to_file(self):
         """Збереження Книги контактів у бінарний файл """
