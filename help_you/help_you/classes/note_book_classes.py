@@ -14,7 +14,6 @@ class Note:
                f"\tNote tags: {[tag for tag in self.tags] if self.tags else self.tags}\n" \
                f"\tNote text: {self.text}"
 
-
     def add_to_note(self, text: str):
         """Додавання тексту до текстового поля нотатки"""
 

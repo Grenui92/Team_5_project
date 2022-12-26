@@ -1,10 +1,9 @@
 from os import path
 
-from classes.contact_book_classes import ContactBook, Record, Birthday
+from classes.contact_book_classes import ContactBook, Record
 from classes.note_book_classes import NoteBook, Note
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
-from datetime import date, timedelta
 
 from .decorator import input_error
 from .file_sorter import sort_targets
@@ -47,10 +46,6 @@ class WorkNote:
 
     def show_page(self, *args):
         """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
-        try:
-            n = int(args[0])
-        except ValueError:
-            raise ValueError(f"You can use only numbers.")
         result = []
         for page in self.note_book.iterator(int(args[0])):
             result_str = ""
@@ -130,7 +125,7 @@ class WorkNote:
         return f"Value {value} is added to {args[0]}"
 
 
-class WorkContact():
+class WorkContact:
     def __init__(self):
         """При ініціалізації відкриваєм бінарний файл з якого
         створюєм нову книжку. Якщо файл пустий - створюєм
@@ -156,7 +151,6 @@ class WorkContact():
             self.contacts_book[args[0]] = Record(args[0])
             return f"Contact with name {args[0]} successfully created."
 
-
     def show_all(self, *_) -> list:
         """Створює рядок з інформацією про кожен контакт"""
 
@@ -173,10 +167,6 @@ class WorkContact():
 
     def show_page(self, *args):
         """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
-        try:
-            n = int(args[0])
-        except ValueError:
-            raise ValueError(f"You can use only numbers.")
         result = []
         for page in self.contacts_book.iterator(int(args[0])):
             result_str = ""
@@ -219,7 +209,6 @@ class WorkContact():
             return self.contacts_book.search_in_contacts(args[0])
         else:
             raise ValueError("You try to find empty space.")
-
 
     def edit_information(self, *args):
         name = args[0]

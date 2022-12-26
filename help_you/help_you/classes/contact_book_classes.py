@@ -2,7 +2,7 @@ import pickle
 from collections import UserDict
 from datetime import datetime
 from os import path
-from re import findall, IGNORECASE, search
+from re import IGNORECASE, search
 
 
 class Field:
