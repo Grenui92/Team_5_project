@@ -1,4 +1,4 @@
-from os import path
+import os
 
 from help_you.book import Book
 
@@ -8,11 +8,12 @@ from .record import Record
 
 class WorkContact:
 
-    def __init__(self):
-        self.contacts_book = Book(path.abspath("contacts"))
+    def __init__(self, path):
+        self.contacts_book = Book(path)
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:
+            os.mkdir("database")
             print(self.contacts_book.save_to_file())
 
     def save_to_file(self):

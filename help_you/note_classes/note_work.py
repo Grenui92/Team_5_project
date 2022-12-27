@@ -1,4 +1,4 @@
-from os import path
+import os
 
 from help_you.book import Book
 
@@ -7,11 +7,12 @@ from help_you.note_classes.note import Note
 
 class WorkNote:
 
-    def __init__(self):
-        self.note_book = Book(path.abspath("notes"))
+    def __init__(self, path):
+        self.note_book = Book(path)
         try:
             print(self.note_book.load_from_file())
         except FileNotFoundError:
+            os.mkdir("database")
             print(self.note_book.save_to_file())
 
     def create(self, name: str, info: list) -> str:

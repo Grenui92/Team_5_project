@@ -8,8 +8,8 @@ from help_you.decorator import input_error
 from help_you.file_sorter import sort_targets
 from help_you.note_classes.note_work import WorkNote
 
-book = WorkContact()
-notes = WorkNote()
+book = WorkContact(path.join("database", "contacts.bin"))
+notes = WorkNote(path.join("database", "notes.bin"))
 
 
 def main():
@@ -75,9 +75,9 @@ def show_results(result: str | list):
 
 @input_error
 def good_bye(*_):
-    book.save_to_file()
-    notes.save_to_file()
-    print("NoteBook saved", "ContactBook saved", sep="\n")
+    print(book.save_to_file())
+    print(notes.save_to_file())
+    # print("NoteBook saved", "ContactBook saved", sep="\n")
     exit("Bye")
 
 

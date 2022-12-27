@@ -1,9 +1,10 @@
 from collections import UserDict
 import pickle
+from help_you.decorator import input_error
 class Book(UserDict):
     def __init__(self, file_path):
         super().__init__()
-        self.file_path = f"{file_path}.bin"
+        self.file_path = file_path
 
     def iterator(self, n: int):
         """Пагінація - посторінковий вивід Контактної книги """
