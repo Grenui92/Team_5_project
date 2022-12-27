@@ -42,12 +42,16 @@ class WorkContact:
 
     def show_page(self, number_of_contacts: str, *_) -> list:
         """Ітеруємось по записам і формуєм сторінку з контактами по number_of_contacts штук на сторінку"""
+        if number_of_contacts:
+            n = int(number_of_contacts)
+        else:
+            n = 5
         result = []
-        for page in self.contacts_book.iterator(int(number_of_contacts)):
+        for page in self.contacts_book.iterator(n):
             result_str = []
             for record in page:
-                result_str.append(str(self.contacts_book[record]) + "\n")
-            result.append(f"\nPage Start\n{result_str}Page End")
+                result_str.append(str(self.contacts_book[record]))
+            result.extend(["Page Start", *result_str, "Page End"])
         return result
 
     def delete_all(self):

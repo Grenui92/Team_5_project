@@ -14,41 +14,49 @@ class WorkNote:
         except FileNotFoundError:
             self.note_book.save_to_file()
 
-    def create(self, *args) -> str:
-        if args[0] in self.note_book:
-            return f"Note with name '{args[0]} already exist."
-        elif not args[0] or not args[1]:
+    def create(self, name: str, info: list) -> str:
+        """Створює нову нотатку у книзі, якщо нотатки з таким ім'ям ще не існує"""
+        if name in self.note_book:
+            return f"Note with name '{name} already exist."
+        elif not name or not info:
             raise ValueError("You can't create empty note.")
         else:
             tags = []
-            for word in args[1]:
+            for word in info:
+                #Шукаємо теги в тексті
                 if word.startswith('#'):
                     tags.append(word)
-            text = " ".join(args[1])
-            self.note_book[args[0]] = Note(args[0], tags, text)
-            return f"Note with name {args[0]} successfully created."
+            text = " ".join(info)
+            self.note_book[name] = Note(name, tags, text)
+            return f"Note with name {name} successfully created."
 
     def show_all(self, *_):
+        """Показує всі нотатки"""
         all_notes = []
-        for note in self.note_book.data.values():
+        for note in self.note_book.values():
             all_notes.append(str(note))
-
         return all_notes if all_notes else 'Notes is empty'
 
-    def show_one(self, *args):
-        return str(self.note_book[args[0]])
+    def show_one(self, name: str, *_):
+        """Показує одну конкретну нотатку"""
+        return str(self.note_book[name])
 
-    def show_page(self, *args):
-        """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
+    def show_page(self, number_of_notes: str, *_) -> list:
+        """Ітеруємось по записам і формуєм рядок з нотатками по number_of_notes штук на сторінку"""
+        if number_of_notes:
+            n = int(number_of_notes)
+        else:
+            n = 5
         result = []
-        for page in self.note_book.iterator(int(args[0])):
-            result_str = ""
+        for page in self.note_book.iterator(int(n)):
+            result_str = []
             for record in page:
-                result_str += str(self.note_book[record]) + "\n"
-            result.append(f"\nPage Start\n{result_str}Page End")
+                result_str.append(str(self.note_book[record]))
+            result.extend(["Page Start", *result_str, "Page End"])
         return result
 
     def delete_all(self):
+        """Видаляє всі нотатки з книги"""
         answer = input("You about to delete all notes in notebook. You shure? Y/N")
         if answer == 'Y':
             self.note_book.data = {}
@@ -56,8 +64,8 @@ class WorkNote:
         else:
             return "Not deleted"
 
-    def delete_one(self, *args):
-        name = args[0]
+    def delete_one(self, name: str, *_):
+        """Видаляє одну конкретну нотатку з книги"""
         if name in self.note_book.data:
             del self.note_book.data[name]
             return f"Note {name} is deleted"
@@ -70,21 +78,20 @@ class WorkNote:
     def load_from_file(self):
         return self.note_book.load_from_file()
 
-    def edit_information(self, *args):
-        try:
-            name = args[0]
-            values = args[1]
-        except IndexError:
+    def edit_information(self, name: str, values: list):
+        """Редагує інформацію в нотатку. Через те що немає можливості без графічного інтерфейсу зробити зручне редагування в прямому сенсі -
+        просто видаляє всі поля окрім імені і додає нову інфу"""
+        if not name or not values:
             raise IndexError("You can't edit note without new information.")
         note: Note = self.note_book.data[name]
         note.clear_text()
         note.clear_tags()
         return note.add_to_note(" ".join(values))
 
-    def edit_name(self, *args):
+    def edit_name(self, name: str, info: list):
+        """Змінює ім'я запису. Змінює як ім'я-ключ нотатки, так і в самій нотатці"""
         try:
-            name = args[0]
-            new_name = args[1][0]
+            new_name = info[0]
         except IndexError:
             raise IndexError(f"Please enter 'old_name' and 'new_name'")
         record: Note = self.note_book[name]
@@ -93,16 +100,16 @@ class WorkNote:
         del self.note_book[name]
         return f"{name}'s name has been changed to {new_name}"
 
-    def search_in(self, search_data, *_):
+    def search_in(self, search_data: str, *_) -> list:
+        """Робить пошук у книзі по одному слову"""
         result = []
-
         for value in self.note_book.values():
             if search_data in (value.name, *value.tags, *value.text.split()):
                 result.append(value)
         return result
 
-    def sorted_by_tags(self, *args):
-
+    def sorted_by_tags(self, *args) -> list:
+        """Робить сортування по тегам. Рахує співпадіння тегів, а потім сортує"""
         tags = [args[0], *args[1]]
         matched_records = []
 
@@ -115,8 +122,8 @@ class WorkNote:
                                    f'{str(note)}')
         return sorted(matched_records, reverse=True) if matched_records else "Matches not found"
 
-    def add_values(self, *args):
-        note: Note = self.note_book[args[0]]
-        value = args[1]
-        note.add_to_note(value)
-        return f"Value {value} is added to {args[0]}"
+    def add_values(self, name: str, info: list):
+        """Додає інформацію в нотатку."""
+        note: Note = self.note_book[name]
+        note.add_to_note(info)
+        return f"Value is added to {name}"

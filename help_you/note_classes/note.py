@@ -9,13 +9,13 @@ class Note:
                f"\tNote tags: {[tag for tag in self.tags] if self.tags else 'Empty'}\n" \
                f"\tNote text: {self.text}"
 
-    def add_to_note(self, text: str):
+    def add_to_note(self, text: list):
         """Додавання тексту до текстового поля нотатки"""
 
         for piece in text:
             if piece.startswith("#"):
                 self.tags.append(piece)
-        self.text += " " + text
+        self.text += " " + " ".join(text)
         return f"The text to note '{self.name}' is added"
 
     def clear_text(self):

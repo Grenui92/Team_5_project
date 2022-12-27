@@ -63,8 +63,8 @@ def show_results(result: str | list):
     рядок, а ретюрнить його сюди. Всі принти мають виконуватися саме тут. І ніде більше в програмі. Окрім FileSorter"""
 
     if isinstance(result, list):
-        for row in result:
-            print(row)
+        for page in result:
+            print(page)
     else:
         print(result)
 
