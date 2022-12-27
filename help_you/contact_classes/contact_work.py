@@ -1,25 +1,19 @@
 from os import path
 
+from book import Book
+
 from .fields import Phone, Email, Address, Birthday
 from .record import Record
-
-from book import Book
-from typing import ClassVar
-
 
 
 class WorkContact:
 
     def __init__(self):
-        """При ініціалізації відкриваєм бінарний файл з якого
-        створюєм нову книжку. Якщо файл пустий - створюєм
-        порожню книжку"""
         self.contacts_book = Book(path.join("database", "contacts"))
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:
             print(self.contacts_book.save_to_file())
-
 
     def save_to_file(self):
         return self.contacts_book.save_to_file()
@@ -27,7 +21,8 @@ class WorkContact:
     def load_from_file(self):
         return self.contacts_book.load_from_file()
 
-    def create(self, name, *_) -> str:
+    def create(self, name: str, *_) -> str:
+        """Створюємо новий запис в книгу, якщо запису з таким ім'ям не існує."""
         if name in self.contacts_book:
             return f"Note with name '{name} already exist."
         else:
@@ -36,28 +31,27 @@ class WorkContact:
 
     def show_all(self, *_) -> list:
         """Створює рядок з інформацією про кожен контакт"""
-
-        records = list(self.contacts_book.values())
         rec_info = []
-        for record in records:
+        for record in self.contacts_book.values():
             rec_info.append(str(record))
-
         return rec_info
 
-    def show_one(self, name, *_) -> str:
+    def show_one(self, name: str, *_) -> str:
+        """Виводить інформацію про один конкретний контакт"""
         return f"{str(self.contacts_book[name]) if name in self.contacts_book else f'Contact {name} is not founded'}"
 
-    def show_page(self, number_of_contacts, *_):
-        """Ітеруємось по записам і формуєм рядок з контактами по n штук на сторінку"""
+    def show_page(self, number_of_contacts: str, *_) -> list:
+        """Ітеруємось по записам і формуєм сторінку з контактами по number_of_contacts штук на сторінку"""
         result = []
         for page in self.contacts_book.iterator(int(number_of_contacts)):
-            result_str = ""
+            result_str = []
             for record in page:
-                result_str += str(self.contacts_book[record]) + "\n"
+                result_str.append(str(self.contacts_book[record]) + "\n")
             result.append(f"\nPage Start\n{result_str}Page End")
         return result
 
     def delete_all(self):
+        """Видаляє ВСІ записи з контактної книги"""
         answer = input(
             f'You about to delete all records in book. You shure? Y/N')
         if answer == 'Y':
@@ -66,17 +60,19 @@ class WorkContact:
         else:
             return 'Not deleted'
 
-    def delete_one(self, name, *_):
+    def delete_one(self, name: str, *_):
+        """Видаляє один конкретний контакт з книги"""
         if name in self.contacts_book:
             del self.contacts_book[name]
             return f"Contact {name} is deleted"
         else:
-            f"Contact {name} is not in book"
+            return f"Contact {name} is not in book"
 
     def add_values(self, name: str, args: list):
+        """Додає інформацію до конкретного контактну у вказане поле"""
         try:
             field = args[0]
-            value = args[1:]
+            information = args[1:]
         except IndexError:
             raise IndexError("Not enough information.")
 
@@ -85,7 +81,7 @@ class WorkContact:
                                   'addresses': self.contacts_book[name].add_address,
                                   'birthday': self.contacts_book[name].set_birthday
                                   }
-        return records_fields_methods[field](" ".join(list(value)))
+        return records_fields_methods[field](" ".join(list(information)))
 
     def search_in(self, search_data: str, *_) -> list:
         """Пошук заданого фрагмента у контактах"""
@@ -100,17 +96,19 @@ class WorkContact:
         return result
 
     def edit_information(self, name: str, args: list) -> str:
+        """Редагує інформацію у вказаному полі вказаного контакту.
+        :var command - має приймати одне з двох значень change or del"""
         command = args[0]
         field = args[1]
         values = args[2:]
 
-        if name in self.contacts_book.data:
-            return self.contacts_book.data[name].edit_information_contact(command, field, values)
+        if name in self.contacts_book:
+            return self.contacts_book[name].edit_information_contact(command, field, values)
         else:
             return "This contact doesn't exist!"
 
     def show_nearest_birthdays(self, days: str, *_) -> list:
-
+        """Показує у кого з контактів відбудеться день народження протягом найблищчих days днів"""
         n = int(days)
         n_days_birthday = []
 
@@ -120,16 +118,18 @@ class WorkContact:
         return n_days_birthday if n_days_birthday else f'No birthdays in nearest {n} days'
 
     def days_to_birthday_for_one(self, name: str, *_) -> str:
+        """Показує скільки днів до дня народження конкретного контакту"""
         return self.contacts_book.data[name].days_to_birthday()
 
     def days_to_birthday_for_all(self, *_) -> list:
+        """Показує скільки днів до дня народження всіх контактів"""
         birthdays = []
         for contact in self.contacts_book.values():
             birthdays.append(f"Days to {contact.name.value}'s birthday: {contact.days_to_birthday()}")
-
         return birthdays if birthdays else 'There is no birthdays in contacts'
 
     def edit_name(self, name: str, args: list) -> str:
+        """Змінює ім'я запису. Змінює як ім'я-ключ контакту, так і в самому контакті"""
         new_name = args[0]
         record: Record = self.contacts_book[name]
         record.name.value = new_name
