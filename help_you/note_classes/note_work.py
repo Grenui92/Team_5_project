@@ -8,7 +8,7 @@ from help_you.note_classes.note import Note
 class WorkNote:
 
     def __init__(self):
-        self.note_book = Book(path.join("help_you", "database", "notes"))
+        self.note_book = Book(path.abspath("notes"))
         try:
             print(self.note_book.load_from_file())
         except FileNotFoundError:

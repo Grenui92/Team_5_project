@@ -21,11 +21,11 @@ class Book(UserDict):
 
         with open(self.file_path, "wb") as file:
             pickle.dump(self.data, file)
-        return f"ContactBook database in '{self.file_path}'"
+        return f"Book saved in '{self.file_path}'"
 
     def load_from_file(self):
         """Завантаження Книги контактів з бінарного файлу """
 
         with open(self.file_path, "rb") as file:
             self.data = pickle.load(file)
-        return f"ContactBook loaded from '{self.file_path}'"
+        return f"Book loaded from '{self.file_path}'"

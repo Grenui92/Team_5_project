@@ -9,7 +9,7 @@ from .record import Record
 class WorkContact:
 
     def __init__(self):
-        self.contacts_book = Book(path.join("help_you", "database", "contacts"))
+        self.contacts_book = Book(path.abspath("contacts"))
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:
