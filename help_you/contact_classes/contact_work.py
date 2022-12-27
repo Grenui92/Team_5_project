@@ -123,7 +123,7 @@ class WorkContact:
 
     def days_to_birthday_for_one(self, name: str, *_) -> str:
         """Показує скільки днів до дня народження конкретного контакту"""
-        return self.contacts_book.data[name].days_to_birthday()
+        return f"Days to birthday for {name} = {self.contacts_book.data[name].days_to_birthday()}"
 
     def days_to_birthday_for_all(self, *_) -> list:
         """Показує скільки днів до дня народження всіх контактів"""
