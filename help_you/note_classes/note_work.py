@@ -1,8 +1,8 @@
-from book import Book
 from os import path
-from .note import Note
-from typing import ClassVar
 
+from book import Book
+
+from .note import Note
 
 
 class WorkNote:
@@ -23,7 +23,7 @@ class WorkNote:
         else:
             tags = []
             for word in info:
-                #Шукаємо теги в тексті
+                # Шукаємо теги в тексті
                 if word.startswith('#'):
                     tags.append(word)
             text = " ".join(info)
