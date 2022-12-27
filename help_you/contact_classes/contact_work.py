@@ -1,6 +1,6 @@
 from os import path
 
-from book import Book
+from help_you.book import Book
 
 from .fields import Phone, Email, Address, Birthday
 from .record import Record
@@ -9,7 +9,7 @@ from .record import Record
 class WorkContact:
 
     def __init__(self):
-        self.contacts_book = Book(path.join("database", "contacts"))
+        self.contacts_book = Book(path.join("help_you", "database", "contacts"))
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:

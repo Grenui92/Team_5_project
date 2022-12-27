@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 [tool.poetry]
 name = "help-you"
 version = "0.1"
@@ -6,6 +10,7 @@ authors = ["Your Name <you@example.com>"]
 license = "MiT"
 readme = "README.md"
 packages = [{include = "help_you"}]
+include = ["contacts.bin", "notes.bin"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -14,6 +19,9 @@ prompt-toolkit = "request"
 [tool.poetry.group.dev.dependencies]
 prompt-toolkit = "^3"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+#[build-system]
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+help_you = "help_you.main:main"

@@ -1,10 +1,12 @@
-from contact_classes.contact_work import WorkContact
-from note_classes.note_work import WorkNote
-from decorator import input_error
-from file_sorter import sort_targets
-from prompt_toolkit.completion import NestedCompleter
-from prompt_toolkit import prompt
 from os import path
+
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import NestedCompleter
+
+from help_you.contact_classes.contact_work import WorkContact
+from help_you.decorator import input_error
+from help_you.file_sorter import sort_targets
+from help_you.note_classes.note_work import WorkNote
 
 book = WorkContact()
 notes = WorkNote()
@@ -35,6 +37,7 @@ def parse_user_text(text: str) -> list:
     else:
         return [data[0], data[1], data[2:]]
 
+
 @input_error
 def handler(command: str, name: str, data) -> str | list:
     """Перевірка команди на наявність в нашому словнику і відповідно виклик функції, якщо команда існує, або рейз помилки. Ця помилка обрана,
@@ -44,6 +47,7 @@ def handler(command: str, name: str, data) -> str | list:
         return commands[command](name, data)
     else:
         raise Warning(command, commands.keys())
+
 
 @input_error
 def input_user_text() -> str:
@@ -67,6 +71,7 @@ def show_results(result: str | list):
             print(page)
     else:
         print(result)
+
 
 @input_error
 def good_bye(*_):
@@ -101,6 +106,7 @@ def instructions(category: str, *_) -> str:
         result = file.read()
     return result
 
+
 """END MAIN"""
 
 """FILE SORTER"""
@@ -115,40 +121,41 @@ def file_sorter(path_for_sorting: str, path_for_sorting_2: list):
         sort_targets(path_for_sorting)
         return f"Folder {path_for_sorting} successfully sorted."
 
+
 """END FILE SORTER"""
 commands = {"help": help_me,
-                     "instruction": instructions,
+            "instruction": instructions,
 
-                     "create_contact": book.create,
-                     "show_contact_book": book.show_all,
-                     "show_contact": book.show_one,
-                     "show_contact_page": book.show_page,
-                     "clear_contact_book": book.delete_all,
-                     "delete_contact": book.delete_one,
-                     "add_to_contact": book.add_values,
-                     "edit_contact": book.edit_information,
-                     "edit_contact_name": book.edit_name,
-                     "search_in_contacts": book.search_in,
+            "create_contact": book.create,
+            "show_contact_book": book.show_all,
+            "show_contact": book.show_one,
+            "show_contact_page": book.show_page,
+            "clear_contact_book": book.delete_all,
+            "delete_contact": book.delete_one,
+            "add_to_contact": book.add_values,
+            "edit_contact": book.edit_information,
+            "edit_contact_name": book.edit_name,
+            "search_in_contacts": book.search_in,
 
-                     "show_nearest_birthdays": book.show_nearest_birthdays,
-                     "days_to_birthday_for_one": book.days_to_birthday_for_one,
-                     "days_to_birthday_for_all": book.days_to_birthday_for_all,
+            "show_nearest_birthdays": book.show_nearest_birthdays,
+            "days_to_birthday_for_one": book.days_to_birthday_for_one,
+            "days_to_birthday_for_all": book.days_to_birthday_for_all,
 
-                     "create_note": notes.create,
-                     "show_note_book": notes.show_all,
-                     "show_note": notes.show_one,
-                     "show_note_page": notes.show_page,
-                     "clear_note_book": notes.delete_all,
-                     "delete_note": notes.delete_one,
-                     "add_to_note": notes.add_values,
-                     "edit_note": notes.edit_information,
-                     "edit_note_name": notes.edit_name,
-                     "search_in_notes": notes.search_in,
-                     "sorted_notes_by_tags": notes.sorted_by_tags,
+            "create_note": notes.create,
+            "show_note_book": notes.show_all,
+            "show_note": notes.show_one,
+            "show_note_page": notes.show_page,
+            "clear_note_book": notes.delete_all,
+            "delete_note": notes.delete_one,
+            "add_to_note": notes.add_values,
+            "edit_note": notes.edit_information,
+            "edit_note_name": notes.edit_name,
+            "search_in_notes": notes.search_in,
+            "sorted_notes_by_tags": notes.sorted_by_tags,
 
-                     "file_sorter": file_sorter,
+            "file_sorter": file_sorter,
 
-                     "exit": good_bye}
+            "exit": good_bye}
 
 if __name__ == "__main__":
     main()

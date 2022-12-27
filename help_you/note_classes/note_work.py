@@ -1,18 +1,18 @@
 from os import path
 
-from book import Book
+from help_you.book import Book
 
-from .note import Note
+from help_you.note_classes.note import Note
 
 
 class WorkNote:
 
     def __init__(self):
-        self.note_book = Book(path.join("database", "notes"))
+        self.note_book = Book(path.join("help_you", "database", "notes"))
         try:
-            self.note_book.load_from_file()
+            print(self.note_book.load_from_file())
         except FileNotFoundError:
-            self.note_book.save_to_file()
+            print(self.note_book.save_to_file())
 
     def create(self, name: str, info: list) -> str:
         """Створює нову нотатку у книзі, якщо нотатки з таким ім'ям ще не існує"""
