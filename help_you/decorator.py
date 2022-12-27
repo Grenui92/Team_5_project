@@ -3,21 +3,11 @@ def input_error(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except IndexError as exc:
-            return exc.args[0]
         except KeyError as exc:
             return f"Wrong information '{exc.args[0]}'."
-        except ValueError as exc:
-            return exc.args[0]
-        except TypeError as exc:
-            return exc.args[0]
-        except FileExistsError as exc:
-            return exc.args[0]
-        except FileNotFoundError as exc:
-            return exc.args[0]
         except Warning as exc:
             return find_word_with_wrong_key(exc.args[0], exc.args[1])
-        except StopIteration as exc:
+        except Exception as exc:
             return exc.args[0]
     return wrapper
 
