@@ -10,5 +10,5 @@ setup(
     include_packge_data=True,
     package_data={"help_you":["database/contacts.bin", "database/notes.bin"]},
     install_requires=["prompt_toolkit"],
-    entry_points={"console_scripts": ["pocket_assistant = help_you.main:main"]}
+    entry_points={"console_scripts": ["help_you = help_you.main:main"]}
 )

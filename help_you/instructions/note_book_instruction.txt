@@ -15,10 +15,10 @@
         Note Tags: #buy #car
         Note Text: I want to #buy new #car
 -----
-"show_note NAME" - Показує одну нотатку має яка має ім'я NAME
+"show_note NAME" - Показує одну нотатку яка має ім'я NAME
 Приклад: show_note New
 У разі успішного виконання поверне:
-    Список Нотаток у такому форматі
+    Нотаток у такому форматі
         Note Name: New
         Note Tags: #buy #car
         Note Text: I want to #buy new #car
@@ -41,7 +41,7 @@
 >>>"Note {name} is deleted"
 -----
 "add_to_note NAME TEXT" - Додає інформацію TEXT до нотатки яка має ім'я NAME. У TEXT можна відмічати слова символом # і тоді ці слова будуть
-    додані в теги цієї нотатки. Вони будуть скопійовані і залишаться також у тексті.
+додані в теги цієї нотатки. Вони будуть скопійовані і залишаться також у тексті.
 Приклад: add_to_note New or maybe i want to #buy a #house
     Tags = old_tags + (#buy, #house)
     Text = old_text + or maybe i want to #buy a #house
