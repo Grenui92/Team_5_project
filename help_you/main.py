@@ -90,11 +90,11 @@ def instructions(category: str, *_) -> str:
 
     match category:  # працює лише на пайтон 3.10+
         case "contacts":
-            main_path = path.join("instructions", "contact_book.txt")
+            main_path = path.join("instructions", "contact_book_instruction")
         case "file":
-            main_path = path.join("instructions", "file_sorter.txt")
+            main_path = path.join("instructions", "file_sorter_instruction")
         case "notes":
-            main_path = path.join("instructions", "note_book.txt")
+            main_path = path.join("instructions", "note_book_instruction.txt")
         case _:
             raise ValueError(f"I can't find instruction for {category}.")
     with open(main_path, "r") as file:
