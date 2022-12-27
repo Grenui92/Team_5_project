@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "help-you"
+version = "0.1"
+description = "Small program"
+authors = ["Your Name <you@example.com>"]
+license = "MiT"
+readme = "README.md"
+packages = [{include = "help_you"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+prompt-toolkit = "request"
+
+[tool.poetry.group.dev.dependencies]
+prompt-toolkit = "^3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
