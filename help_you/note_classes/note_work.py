@@ -123,7 +123,7 @@ class WorkNote:
         return sorted(matched_records, reverse=True) if matched_records else "Matches not found"
 
     def add_values(self, name: str, info: list):
-        """Додає інформацію в нотатку."""
+        """Додає інформацію в нотатку"""
         note: Note = self.note_book[name]
         note.add_to_note(info)
         return f"Value is added to {name}"
