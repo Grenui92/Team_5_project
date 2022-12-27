@@ -40,7 +40,7 @@ class Phone(Field):
 class Email(Field):
 
     @staticmethod
-    def normalize_email(value):
+    def verify_email(value):
         """Верифікація введеного e-mail користувача"""
 
         email = search(r"^[a-z0-9._-]{2,64}@\w{2,}[.]\w{2,3}$", value, flags=IGNORECASE)
@@ -52,13 +52,13 @@ class Email(Field):
 
     @Field.value.setter
     def value(self, value):
-        self._value = self.normalize_email(value)
+        self._value = self.verify_email(value)
 
 
 class Birthday(Field):
 
     @staticmethod
-    def normalize_birthday(value):
+    def verify_birthday(value):
         """Верифікація введеної дати народження користувача. Очікується формат ХХ.ХХ.ХХХХ або Х.Х.ХХХХ """
 
         birthday = search(r"^\d{1,2}\.\d{1,2}\.\d{4}$", value)
@@ -74,12 +74,11 @@ class Birthday(Field):
 
     @Field.value.setter
     def value(self, value):
-        self._value = self.normalize_birthday(value)
-
+        self._value = self.verify_birthday()
 
 class Address(Field):
     @staticmethod
-    def normalize_address(value):
+    def verify_address(value):
         """Верифікація введеної адреси. Повинна складатися мінімум з 2 символів """
         print(value)
         address = search(r'^[a-z0-9,-/ ]+$', value)
@@ -90,4 +89,4 @@ class Address(Field):
 
     @Field.value.setter
     def value(self, value):
-        self._value = self.normalize_address(value)
+        self._value = self.verify_address(value)
