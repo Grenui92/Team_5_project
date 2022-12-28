@@ -1,6 +1,6 @@
-from help_you.book import Book
-from .fields import Phone, Email, Address, Birthday
-from .record import Record
+from book import Book
+from contact_classes.fields import Phone, Email, Address, Birthday
+from contact_classes.record import Record
 
 
 class WorkContact:
@@ -11,7 +11,6 @@ class WorkContact:
         try:
             print(self.contacts_book.load_from_file())
         except FileNotFoundError:
-            print(f"File not found. Create {path}")
             self.contacts_book.save_to_file()
 
     def save_to_file(self):

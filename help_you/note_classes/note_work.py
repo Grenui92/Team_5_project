@@ -1,5 +1,5 @@
-from help_you.book import Book
-from help_you.note_classes.note import Note
+from book import Book
+from note_classes.note import Note
 
 
 class WorkNote:
@@ -9,7 +9,6 @@ class WorkNote:
         try:
             print(self.note_book.load_from_file())
         except FileNotFoundError:
-            print(f"File not found. Create {path}")
             self.note_book.save_to_file()
 
     def create(self, name: str, info: list) -> str:

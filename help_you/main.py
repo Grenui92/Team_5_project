@@ -1,33 +1,37 @@
 import os
 from os import getlogin
-from os import path
 from sys import platform
 
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
-from help_you.contact_classes.contact_work import WorkContact
-from help_you.decorator import input_error
-from help_you.file_sorter import sort_targets
-from help_you.note_classes.note_work import WorkNote
+from contact_classes.contact_work import WorkContact
+from decorator import input_error
+from file_sorter import sort_targets
+from instructions import show_instructions
+from note_classes.note_work import WorkNote
 
-try:
+
+def create_absolute_path():
     match platform:
         case "linux":
             abs_path = f"/home/{getlogin()}/Documents/help_you"
-            os.mkdir(abs_path)
         case "win32":
             abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
-            os.mkdir(abs_path)
         case "darwin":
             pass
         case _:
             raise OSError("I can't work with this OS. Sorry.")
-except FileExistsError:
-    print("Folder already exist")
+    try:
+        os.mkdir(abs_path)
+        return abs_path
+    except FileExistsError:
+        return abs_path
 
-book = WorkContact(f"{abs_path}/contacts.bin")
-notes = WorkNote(f"{abs_path}/notes.bin")
+
+absolute_path = create_absolute_path()
+book = WorkContact(f"{absolute_path}/contacts.bin")
+notes = WorkNote(f"{absolute_path}/notes.bin")
 
 
 def main():
@@ -40,7 +44,7 @@ def main():
         except ValueError:
             print("Enter some information please")
             continue
-        result = handler(command=command, name=name, data=data)
+        result = handler(command, name, data)
         show_results(result)
 
 
@@ -72,10 +76,8 @@ def input_user_text() -> str:
     """Просто зчитує текст."""
     commands_completer = commands
     users = {k: None for k in book.contacts_book}
-    input_completer = NestedCompleter.from_nested_dict(
-        {k: users for k in commands_completer})
-    data = prompt('"Please enter what do you want to do: ',
-                  completer=input_completer)
+    input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
+    data = prompt('"Please enter what do you want to do: ', completer=input_completer)
     return data
 
 
@@ -95,7 +97,6 @@ def show_results(result: str | list):
 def good_bye(*_):
     print(book.save_to_file())
     print(notes.save_to_file())
-    # print("NoteBook saved", "ContactBook saved", sep="\n")
     exit("Bye")
 
 
@@ -111,17 +112,7 @@ def help_me(*_) -> str:
 def instructions(category: str, *_) -> str:
     """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
 
-    match category:  # працює лише на пайтон 3.10+
-        case "contacts":
-            main_path = path.join("instructions", "contact_book_instruction")
-        case "file":
-            main_path = path.join("instructions", "file_sorter_instruction")
-        case "notes":
-            main_path = path.join("instructions", "note_book_instruction.txt")
-        case _:
-            raise ValueError(f"I can't find instruction for {category}.")
-    with open(main_path, "r") as file:
-        result = file.read()
+    result = show_instructions(category)
     return result
 
 
