@@ -11,23 +11,27 @@ from decorator import input_error
 from file_sorter import sort_targets
 from note_classes.note_work import WorkNote
 
-# try:
-#     match platform:
-#         case "linux":
-#             abs_path = f"/home/{getlogin()}/Documents/help_you"
-#             os.mkdir(abs_path)
-#         case "win32":
-#             abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
-#             os.mkdir(abs_path)
-#         case "darwin":
-#             pass
-#         case _:
-#             raise OSError("I can't work with this OS. Sorry.")
-# except FileExistsError:
-#     print("Folder already exist")
+def create_absolute_path():
+    match platform:
+        case "linux":
+            abs_path = f"/home/{getlogin()}/Documents/help_you"
+            os.mkdir(abs_path)
+        case "win32":
+            abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
+        case "darwin":
+            pass
+        case _:
+            raise OSError("I can't work with this OS. Sorry.")
+    try:
+        os.mkdir(abs_path)
+        return abs_path
+    except FileExistsError:
+        return abs_path
 
-book = WorkContact(f"contacts.bin")
-notes = WorkNote(f"notes.bin")
+
+absolute_path = create_absolute_path()
+book = WorkContact(f"{absolute_path}/contacts.bin")
+notes = WorkNote(f"{absolute_path}/notes.bin")
 
 
 def main():
@@ -40,7 +44,7 @@ def main():
         except ValueError:
             print("Enter some information please")
             continue
-        result = handler(command=command, name=name, data=data)
+        result = handler(command, name, data)
         show_results(result)
 
 
@@ -175,5 +179,5 @@ commands = {"help": help_me,
 
             "exit": good_bye}
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

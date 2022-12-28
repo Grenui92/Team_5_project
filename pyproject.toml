@@ -17,7 +17,6 @@ prompt-toolkit = "request"
 
 [tool.setuptools.packages.find]
 where = ["help_you"]
-#include = ["contacts.bin", "notes.bin", "main*"]
 
 [project.scripts]
 help_you = "main:main"
