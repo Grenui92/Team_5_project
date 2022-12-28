@@ -5,9 +5,11 @@
 3. команду для сортування потрібної папки
 
 ### Для встановлення цього пакету можна використати команду
-- "pip install ." (якщо знаходитесь у папці, в якій розташовано файл setup.py)
-- "pip install PATH" (де PATH - це шлях відносно вашого розташування до setup.py)
-- "pip install ABSOLUTE_PATH" (ABSOLUTE_PATH - абсолютний шлях до файл setup.py, окремий для кожної ОС)
+- "pip install -e ." (знаходячий у папці з розпакованим проектом)
+- збереження файлів проходить за шляхом\
+"/home/{getlogin()}/Documents/help_you" для Linux\
+"C:/Users/{getlogin()}/AppData/Local/help_you" для Windows\
+ для MacOS
 
 ### Після встановлення - для запуску роботи скрипту треба використати в командному рядку команду "help_you"
 
@@ -351,4 +353,14 @@ note: None
 -----
 
 ### FileSorter
-Сортує файли в конкретній па
+###### "file_sorter PATH" 
+виклик автоматичного сортувальника файлів. В змінну PATH вам треба вказати шлях до папки в середині якої буде відбуватися
+сортування. Шлях може бути як абсолютним (кращий варіант, менше вірогідність помилки) так і відносним до того місця в якому ви викликали помічника.
+Приклад: file_sorter C:/Users/Zver/Downloads
+>"archives" - "zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"\
+>"audios" - "wav", "mp3", "ogg", "amr"\
+>"images" - "jpeg", "png", "jpg", "svg"\
+>"videos" - "avi", "mp4", "mov", "mkv"\
+>"documents" - "doc", "docx", "txt", "pdf", "xls", "xlsx", "ppt", "pptx", "rtf", "xml", "ini"\
+>"softwares" - "exe", "msi", "bat", "dll"\
+>"other" - all other files
