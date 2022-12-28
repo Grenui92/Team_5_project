@@ -1,6 +1,5 @@
 import os
 from os import getlogin
-from os import path
 from sys import platform
 
 from prompt_toolkit import prompt
@@ -9,13 +8,14 @@ from prompt_toolkit.completion import NestedCompleter
 from contact_classes.contact_work import WorkContact
 from decorator import input_error
 from file_sorter import sort_targets
+from instructions import show_instructions
 from note_classes.note_work import WorkNote
+
 
 def create_absolute_path():
     match platform:
         case "linux":
             abs_path = f"/home/{getlogin()}/Documents/help_you"
-            os.mkdir(abs_path)
         case "win32":
             abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
         case "darwin":
@@ -76,10 +76,8 @@ def input_user_text() -> str:
     """Просто зчитує текст."""
     commands_completer = commands
     users = {k: None for k in book.contacts_book}
-    input_completer = NestedCompleter.from_nested_dict(
-        {k: users for k in commands_completer})
-    data = prompt('"Please enter what do you want to do: ',
-                  completer=input_completer)
+    input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
+    data = prompt('"Please enter what do you want to do: ', completer=input_completer)
     return data
 
 
@@ -99,7 +97,6 @@ def show_results(result: str | list):
 def good_bye(*_):
     print(book.save_to_file())
     print(notes.save_to_file())
-    # print("NoteBook saved", "ContactBook saved", sep="\n")
     exit("Bye")
 
 
@@ -115,17 +112,7 @@ def help_me(*_) -> str:
 def instructions(category: str, *_) -> str:
     """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
 
-    match category:  # працює лише на пайтон 3.10+
-        case "contacts":
-            main_path = path.join("instructions", "contact_book_instruction")
-        case "file":
-            main_path = path.join("instructions", "file_sorter_instruction")
-        case "notes":
-            main_path = path.join("instructions", "note_book_instruction.txt")
-        case _:
-            raise ValueError(f"I can't find instruction for {category}.")
-    with open(main_path, "r") as file:
-        result = file.read()
+    result = show_instructions(category)
     return result
 
 
@@ -179,5 +166,5 @@ commands = {"help": help_me,
 
             "exit": good_bye}
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
