@@ -288,6 +288,15 @@ note: None
 
 ###### "edit_contact NAME FIELD OLD_VALUE NEW_VALUE" 
 - Заміню OLD_VALUE на NEW_VALUE для контакту NAME у полі FIELD
+- У випадку з полями birthday and addresses - треба вводити на одне значення менше, тому що у разі виклику команди change
+старе значення буде змінено на нове. У разі використання del взагалі не треба вводити ні NEW_VALUE ні OLD_VALUE бо старі данні буду просто замінено 
+на "Not set\
+Приклад change:\
+edit_contact Stas change birthday 25.06.1992\
+edit_contact Stas change addresses Kharkiv, Maidan\
+Приклад del:\
+edit_contact Stas del birthday x (де х - це просто значення вказуюче на видалення інформації. Підійде будь яка буква)\
+edit_contact Stas del addresses x (де х - це просто значення вказуюче на видалення інформації. Підійде будь яка буква)
 
 > - FIELD phones - номера телефонів (+380661112233). Саме з кодом країни загальною довжиною 12 цифр і тринадцятий символ це +
 > - FIELD emails - імейли (aaaa.ssss@ddddd.com). Імейл може складатися з букв латинського алфавіту, цифр і символів ".-_" до знаку "собака", і лише
@@ -342,7 +351,7 @@ note: None
 
 -----
 
-###### "show_days_to_birthday_for_all" 
+###### "days_to_birthday_for_all" 
 - Поверне кількість днів до ДН для всіх контактів
 - Приклад: show_days_to_birthday_for_all
 

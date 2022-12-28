@@ -21,6 +21,8 @@ class WorkContact:
 
     def create(self, name: str, *_) -> str:
         """Створюємо новий запис в книгу, якщо запису з таким ім'ям не існує."""
+        if not name:
+            raise ValueError("You can't create empty note.")
         if name in self.contacts_book:
             return f"Note with name '{name} already exist."
         else:
@@ -36,7 +38,9 @@ class WorkContact:
 
     def show_one(self, name: str, *_) -> str:
         """Виводить інформацію про один конкретний контакт"""
-        return f"{str(self.contacts_book[name]) if name in self.contacts_book else f'Contact {name} is not founded'}"
+        if not name:
+            raise ValueError("You can't search empty contact-name.")
+        return f"{str(self.contacts_book[name]) if name in self.contacts_book else f'Contact {name} is not found.'}"
 
     def show_page(self, number_of_contacts: str, *_) -> list:
         """Ітеруємось по записам і формуєм сторінку з контактами по number_of_contacts штук на сторінку"""
@@ -64,6 +68,8 @@ class WorkContact:
 
     def delete_one(self, name: str, *_):
         """Видаляє один конкретний контакт з книги"""
+        if not name:
+            raise ValueError("You can't delete empty contact.")
         if name in self.contacts_book:
             del self.contacts_book[name]
             return f"Contact {name} is deleted"
@@ -76,34 +82,40 @@ class WorkContact:
             field = args[0]
             information = args[1:]
         except IndexError:
-            raise IndexError("Not enough information.")
-
+            return "You can't add to contact empty information."
+        if not field or not information:
+            return "You can't add to contact empty information."
         records_fields_methods = {'phones': self.contacts_book[name].add_phone,
                                   'emails': self.contacts_book[name].add_email,
-                                  'addresses': self.contacts_book[name].add_address,
-                                  'birthday': self.contacts_book[name].set_birthday
-                                  }
-        return records_fields_methods[field](" ".join(list(information)))
+                                  'addresses': self.contacts_book[name].set_address,
+                                  'birthday': self.contacts_book[name].set_birthday}
+        if field not in records_fields_methods:
+            return f"Wrong field '{field}'."
+        return records_fields_methods[field](" ".join(information))
 
     def search_in(self, search_data: str, *_) -> list:
         """Пошук заданого фрагмента у контактах"""
+        if not search_data:
+            raise ValueError("Empty search information")
         result = []
         for value in self.contacts_book.values():
-            if search_data in (value.name.value,
-                               *[phone.value for phone in value.phones if isinstance(phone, Phone)],
-                               *[email.value for email in value.emails if isinstance(email, Email)],
-                               *[address.value for address in value.addresses if isinstance(address, Address)],
-                               *[value.birthday.value if isinstance(value.birthday, Birthday) else "Bimba"]):
+            search_target = [value.name.value,
+                             *[phone.value for phone in value.phones if isinstance(phone, Phone)],
+                             *[email.value for email in value.emails if isinstance(email, Email)],
+                             *[value.birthday.value if isinstance(value.birthday, Birthday) else None]]
+            if isinstance(value.addresses, Address):
+                search_target.extend(value.addresses.value.split())
+            if search_data in (search_target):
                 result.append(value)
         return result
 
     def edit_information(self, name: str, args: list) -> str:
         """Редагує інформацію у вказаному полі вказаного контакту.
         :var command - має приймати одне з двох значень change or del"""
-        command = args[0]
-        field = args[1]
-        values = args[2:]
-
+        try:
+            command, field, values = args[0], args[1], [args[2], *args[3:]]
+        except IndexError:
+            return "You can't edit contact with empty information."
         if name in self.contacts_book:
             return self.contacts_book[name].edit_information_contact(command, field, values)
         else:
@@ -111,11 +123,14 @@ class WorkContact:
 
     def show_nearest_birthdays(self, days: str, *_) -> list:
         """Показує у кого з контактів відбудеться день народження протягом найблищчих days днів"""
-        n = int(days)
-        n_days_birthday = []
+        try:
+            n = int(days)
+        except ValueError:
+            n = 5
 
+        n_days_birthday = []
         for contact in self.contacts_book.values():
-            if contact.days_to_birthday() <= n:
+            if isinstance(contact.birthday, Birthday) and contact.days_to_birthday() <= n:
                 n_days_birthday.append(f"Days to {contact.name.value}'s birthday : {contact.days_to_birthday()} days \n")
         return n_days_birthday if n_days_birthday else f'No birthdays in nearest {n} days'
 
@@ -132,7 +147,10 @@ class WorkContact:
 
     def edit_name(self, name: str, args: list) -> str:
         """Змінює ім'я запису. Змінює як ім'я-ключ контакту, так і в самому контакті"""
-        new_name = args[0]
+        try:
+            new_name = args[0]
+        except IndexError:
+            raise IndexError("You can't edit name with empty information.")
         record: Record = self.contacts_book[name]
         record.name.value = new_name
         self.contacts_book[new_name] = record

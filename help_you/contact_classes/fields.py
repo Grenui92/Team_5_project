@@ -26,7 +26,7 @@ class Phone(Field):
         phone = search(r'(^\+\d{12}$)|(^0\d{9}$)', value)
         if phone:
             if len(phone.string) == 13:
-                return f"+{phone.string}"
+                return f"{phone.string}"
             elif len(phone.string) == 10:
                 return f"+38{phone.string}"
         else:
@@ -60,7 +60,6 @@ class Birthday(Field):
     @staticmethod
     def verify_birthday(value):
         """Верифікація введеної дати народження користувача. Очікується формат ХХ.ХХ.ХХХХ або Х.Х.ХХХХ """
-
         birthday = search(r"^\d{1,2}\.\d{1,2}\.\d{4}$", value)
         if not birthday:
             raise ValueError("Invalid format birthday. Program wait dd.mm.yyyy format. Try again.")
@@ -74,13 +73,13 @@ class Birthday(Field):
 
     @Field.value.setter
     def value(self, value):
-        self._value = self.verify_birthday()
+        self._value = self.verify_birthday(value)
 
 class Address(Field):
     @staticmethod
     def verify_address(value):
         """Верифікація введеної адреси. Повинна складатися мінімум з 2 символів """
-        address = search(r'^[a-z0-9,-/ ]+$', value)
+        address = search(r'^[a-zA-Z0-9,-/ ]+$', value)
         if address:
             return address.group()
         else:

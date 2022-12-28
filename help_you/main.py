@@ -6,10 +6,10 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
 from contact_classes.contact_work import WorkContact
-from decorator import input_error
 from file_sorter import sort_targets
 from instructions import show_instructions
 from note_classes.note_work import WorkNote
+from bug_catcher import erorr_catcher
 
 
 def main():
@@ -26,17 +26,18 @@ def main():
         show_results(result)
 
 
-@input_error
+@erorr_catcher
 def input_user_text() -> str:
     """Просто зчитує текст."""
     commands_completer = commands
     users = {k: None for k in book.contacts_book}
     input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
     data = prompt('"Please enter what do you want to do: ', completer=input_completer)
+    # data = input("Enter: ")
     return data
 
 
-@input_error
+@erorr_catcher
 def parse_user_text(text: str) -> list:
     """Обробка тексту. Поділяє текст на три частини, у разі виклику юзером команди яка не потребує аргументів - повертає все одно список
     з трьох елементів, щоб виклик всіх команд був однаковий."""
@@ -48,7 +49,7 @@ def parse_user_text(text: str) -> list:
         return [data[0], data[1], data[2:]]
 
 
-@input_error
+@erorr_catcher
 def handler(command: str, name: str, data) -> str | list:
     """Перевірка команди на наявність в нашому словнику і відповідно виклик функції, якщо команда існує, або рейз помилки. Ця помилка обрана,
     щоб відокремитися від KeyError. Коли декоратор ловить цей Warning - він має запускати процес аналізу і підказки команд."""
@@ -67,7 +68,7 @@ def help_me(*_) -> str:
            "Or use 'exit' if you want to leave."
 
 
-@input_error
+@erorr_catcher
 def instructions(category: str, *_) -> str:
     """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
 
@@ -75,7 +76,7 @@ def instructions(category: str, *_) -> str:
     return result
 
 
-@input_error
+@erorr_catcher
 def show_results(result: str | list):
     """Виводить результат запросу користувача. Вдалий чи не вдалий - все одно виводить. Навіть декоратор якщо ловить помилку - він не принтує
     рядок, а ретюрнить його сюди. Всі принти мають виконуватися саме тут. І ніде більше в програмі. Окрім FileSorter"""
@@ -87,14 +88,14 @@ def show_results(result: str | list):
         print(result)
 
 
-@input_error
+@erorr_catcher
 def good_bye(*_):
     print(book.save_to_file())
     print(notes.save_to_file())
     exit("Bye")
 
 
-@input_error
+@erorr_catcher
 def file_sorter(path_for_sorting: str, path_for_sorting_2: list):
     if path_for_sorting_2:
         sort_targets([path_for_sorting, *path_for_sorting_2])
@@ -104,7 +105,7 @@ def file_sorter(path_for_sorting: str, path_for_sorting_2: list):
         return f"Folder {path_for_sorting} successfully sorted."
 
 
-@input_error
+@erorr_catcher
 def create_path_for_saves():
     match platform:
         case "linux":

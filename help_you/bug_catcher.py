@@ -1,5 +1,5 @@
 import difflib
-def input_error(func):
+def erorr_catcher(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -12,7 +12,6 @@ def input_error(func):
     return wrapper
 
 def find_word_with_wrong_key(srch: str, com: list) -> str:
-    search_words = srch.split("_")
     result_dict = {}
     for words in com:
         mathcer = difflib.SequenceMatcher(None, srch, words)
