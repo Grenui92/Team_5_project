@@ -12,28 +12,6 @@ from instructions import show_instructions
 from note_classes.note_work import WorkNote
 
 
-def create_absolute_path():
-    match platform:
-        case "linux":
-            abs_path = f"/home/{getlogin()}/Documents/help_you"
-        case "win32":
-            abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
-        case "darwin":
-            pass
-        case _:
-            raise OSError("I can't work with this OS. Sorry.")
-    try:
-        os.mkdir(abs_path)
-        return abs_path
-    except FileExistsError:
-        return abs_path
-
-
-absolute_path = create_absolute_path()
-book = WorkContact(f"{absolute_path}/contacts.bin")
-notes = WorkNote(f"{absolute_path}/notes.bin")
-
-
 def main():
     """Основна функція. Приймаємо текст, парсимо його, передаємо в хендлер. Виводимо результат."""
     while True:
@@ -46,6 +24,16 @@ def main():
             continue
         result = handler(command, name, data)
         show_results(result)
+
+
+@input_error
+def input_user_text() -> str:
+    """Просто зчитує текст."""
+    commands_completer = commands
+    users = {k: None for k in book.contacts_book}
+    input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
+    data = prompt('"Please enter what do you want to do: ', completer=input_completer)
+    return data
 
 
 @input_error
@@ -71,14 +59,20 @@ def handler(command: str, name: str, data) -> str | list:
         raise Warning(command, commands.keys())
 
 
+def help_me(*_) -> str:
+    return "If you want to know how to use this script - use command 'instruction' with:\n" \
+           "'contacts' - to read about ContactBook commands.\n" \
+           "'notes' - to read about NoteBook.\n" \
+           "'file' - to read about FileSorter.\n" \
+           "Or use 'exit' if you want to leave."
+
+
 @input_error
-def input_user_text() -> str:
-    """Просто зчитує текст."""
-    commands_completer = commands
-    users = {k: None for k in book.contacts_book}
-    input_completer = NestedCompleter.from_nested_dict({k: users for k in commands_completer})
-    data = prompt('"Please enter what do you want to do: ', completer=input_completer)
-    return data
+def instructions(category: str, *_) -> str:
+    """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
+
+    result = show_instructions(category)
+    return result
 
 
 @input_error
@@ -100,27 +94,6 @@ def good_bye(*_):
     exit("Bye")
 
 
-def help_me(*_) -> str:
-    return "If you want to know how to use this script - use command 'instruction' with:\n" \
-           "'contacts' - to read about ContactBook commands.\n" \
-           "'notes' - to read about NoteBook.\n" \
-           "'file' - to read about FileSorter.\n" \
-           "Or use 'exit' if you want to leave."
-
-
-@input_error
-def instructions(category: str, *_) -> str:
-    """Обирає який файл інструкцій відкрити відповідно до команди користувача."""
-
-    result = show_instructions(category)
-    return result
-
-
-"""END MAIN"""
-
-"""FILE SORTER"""
-
-
 @input_error
 def file_sorter(path_for_sorting: str, path_for_sorting_2: list):
     if path_for_sorting_2:
@@ -131,7 +104,28 @@ def file_sorter(path_for_sorting: str, path_for_sorting_2: list):
         return f"Folder {path_for_sorting} successfully sorted."
 
 
-"""END FILE SORTER"""
+@input_error
+def create_path_for_saves():
+    match platform:
+        case "linux":
+            abs_path = f"/home/{getlogin()}/Documents/help_you"
+        case "win32":
+            abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
+        case "darwin":
+            pass
+        case _:
+            raise OSError("I can't work with this OS. Sorry.")
+    try:
+        os.mkdir(abs_path)
+        return abs_path
+    except FileExistsError:
+        return abs_path
+
+
+absolute_path = create_path_for_saves()
+book = WorkContact(f"{absolute_path}/contacts.bin")
+notes = WorkNote(f"{absolute_path}/notes.bin")
+
 commands = {"help": help_me,
             "instruction": instructions,
 
