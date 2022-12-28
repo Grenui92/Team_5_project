@@ -17,7 +17,8 @@ try:
             abs_path = f"/home/{getlogin()}/Documents/help_you"
             os.mkdir(abs_path)
         case "win32":
-            pass
+            abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
+            os.mkdir(abs_path)
         case "darwin":
             pass
         case _:
