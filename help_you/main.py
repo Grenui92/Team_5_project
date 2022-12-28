@@ -1,4 +1,7 @@
+import os
+from os import getlogin
 from os import path
+from sys import platform
 
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
@@ -8,8 +11,22 @@ from help_you.decorator import input_error
 from help_you.file_sorter import sort_targets
 from help_you.note_classes.note_work import WorkNote
 
-book = WorkContact(path.join("database", "contacts.bin"))
-notes = WorkNote(path.join("database", "notes.bin"))
+try:
+    match platform:
+        case "linux":
+            abs_path = f"/home/{getlogin()}/Documents/help_you"
+            os.mkdir(abs_path)
+        case "win32":
+            pass
+        case "darwin":
+            pass
+        case _:
+            raise OSError("I can't work with this OS. Sorry.")
+except FileExistsError:
+    print("Folder already exist")
+
+book = WorkContact(f"{abs_path}/contacts.bin")
+notes = WorkNote(f"{abs_path}/notes.bin")
 
 
 def main():

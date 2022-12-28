@@ -1,7 +1,4 @@
-import os
-
 from help_you.book import Book
-
 from help_you.note_classes.note import Note
 
 
@@ -12,8 +9,8 @@ class WorkNote:
         try:
             print(self.note_book.load_from_file())
         except FileNotFoundError:
-            os.mkdir("database")
-            print(self.note_book.save_to_file())
+            print(f"File not found. Create {path}")
+            self.note_book.save_to_file()
 
     def create(self, name: str, info: list) -> str:
         """Створює нову нотатку у книзі, якщо нотатки з таким ім'ям ще не існує"""
