@@ -6,28 +6,28 @@ from sys import platform
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
-from help_you.contact_classes.contact_work import WorkContact
-from help_you.decorator import input_error
-from help_you.file_sorter import sort_targets
-from help_you.note_classes.note_work import WorkNote
+from contact_classes.contact_work import WorkContact
+from decorator import input_error
+from file_sorter import sort_targets
+from note_classes.note_work import WorkNote
 
-try:
-    match platform:
-        case "linux":
-            abs_path = f"/home/{getlogin()}/Documents/help_you"
-            os.mkdir(abs_path)
-        case "win32":
-            abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
-            os.mkdir(abs_path)
-        case "darwin":
-            pass
-        case _:
-            raise OSError("I can't work with this OS. Sorry.")
-except FileExistsError:
-    print("Folder already exist")
+# try:
+#     match platform:
+#         case "linux":
+#             abs_path = f"/home/{getlogin()}/Documents/help_you"
+#             os.mkdir(abs_path)
+#         case "win32":
+#             abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
+#             os.mkdir(abs_path)
+#         case "darwin":
+#             pass
+#         case _:
+#             raise OSError("I can't work with this OS. Sorry.")
+# except FileExistsError:
+#     print("Folder already exist")
 
-book = WorkContact(f"{abs_path}/contacts.bin")
-notes = WorkNote(f"{abs_path}/notes.bin")
+book = WorkContact(f"contacts.bin")
+notes = WorkNote(f"notes.bin")
 
 
 def main():

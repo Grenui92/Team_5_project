@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from help_you.contact_classes.fields import Name, Phone, Email, Address, Birthday
+from contact_classes.fields import Name, Phone, Email, Address, Birthday
 
 
 class Record:

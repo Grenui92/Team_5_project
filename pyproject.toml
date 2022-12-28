@@ -1,27 +1,23 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.poetry]
+[project]
 name = "help-you"
 version = "0.1"
+authors=[{name="Stas"}]
 description = "Small program"
-authors = ["Your Name <you@example.com>"]
-license = "MiT"
 readme = "README.md"
-packages = [{include = "help_you"}]
-include = ["contacts.bin", "notes.bin"]
+
+requires-python = ">=3.10"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 prompt-toolkit = "request"
 
-[tool.poetry.group.dev.dependencies]
-prompt-toolkit = "^3"
+[tool.setuptools.packages.find]
+where = ["help_you"]
+#include = ["contacts.bin", "notes.bin", "main*"]
 
-#[build-system]
-#requires = ["poetry-core"]
-#build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-help_you = "help_you.main:main"
+[project.scripts]
+help_you = "main:main"
