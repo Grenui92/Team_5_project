@@ -123,7 +123,7 @@ class WorkNote:
                 if tag in tags:
                     matched_tags += 1
             matched_records.append(f'Matches:{matched_tags}\n'
-                                   f'{str(note)}')
+                                   f'{str(note)}') if matched_tags else None
         return sorted(matched_records, reverse=True) if matched_records else "Matches not found"
 
     def add_values(self, name: str, info: list):
