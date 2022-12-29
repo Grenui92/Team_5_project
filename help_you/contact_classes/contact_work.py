@@ -22,9 +22,9 @@ class WorkContact:
     def create(self, name: str, *_) -> str:
         """Створюємо новий запис в книгу, якщо запису з таким ім'ям не існує."""
         if not name:
-            raise ValueError("You can't create empty note.")
+            raise ValueError("You can't create empty contact.")
         if name in self.contacts_book:
-            return f"Note with name '{name} already exist."
+            return f"Contact with name '{name} already exist."
         else:
             self.contacts_book[name] = Record(name)
             return f"Contact with name {name} successfully created."
