@@ -6,7 +6,8 @@
 
 ### Для встановлення цього пакету можна використати команду
 - "pip install -e ." (знаходячий у папці з розпакованим проектом)
-- збереження файлів проходить за шляхом\
+- збереження файлів проходить за шляхом
+
 "/home/{getlogin()}/Documents/help_you" для Linux\
 "C:/Users/{getlogin()}/AppData/Local/help_you" для Windows\
  для MacOS
@@ -48,7 +49,7 @@
 >tags = #buy #car
 
 У разі успішного виконання повертає:\
-Список Нотаток у такому форматі:
+Нотатоку у такому форматі:
 >Note Name: New\
 >Note Tags: #buy #car\
 >Note Text: I want to #buy new #car
@@ -135,8 +136,8 @@
 
 > Варіанти FIELD і приклади використання:
 > - FIELD tags - теги (#storm #dream). Обов'язково використовувати # . У разі відсутності цього символу - слово буде проігноровано. Текст нотатки
-    залишається незмінним\
-> - FIELD text - текст (My #dream - swim in the #storm). Все речення буде збережено повністю. Слова помічені символом # буде ДОДАНО до старих тегів.
+    залишається незмінним
+> - FIELD text - текст (My #dream - swim in the #storm). Все речення буде додано повністю. Слова помічені символом # буде ДОДАНО до старих тегів.
 
 - Приклад: edit_note New text My #dream - swim in the #storm
 
@@ -192,7 +193,7 @@
 Name: Stas\
 phones: [ ]\
 emails: [ ]\
-address: [ ]\
+address: Address not set\
 birthday: Birthday not set\
 note: None
 
@@ -212,7 +213,7 @@ note: None
 >Name: Stas\
 >phones: [x, y, s]\
 >emails: [x, y, s]\
->address: [x, y, x]\
+>address: Soborna 50\
 >birthday: 25.06.1992
 
 -----
@@ -225,7 +226,7 @@ note: None
 >Name: Stas\
 >phones: [x, y, s]\
 >emails: [x, y, s]\
->address: [x, y, x]\
+>address: Soborna 50\
 >birthday: 25.06.1992
 
 У разі якщо контакт з цим іменем не знайдено:

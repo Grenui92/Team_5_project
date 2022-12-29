@@ -56,10 +56,10 @@ class WorkContact:
             result.extend(["Page Start", *result_str, "Page End"])
         return result
 
-    def delete_all(self):
+    def delete_all(self, *_):
         """Видаляє ВСІ записи з контактної книги"""
         answer = input(
-            f'You about to delete all records in book. You shure? Y/N')
+            f"You about to delete all records in book. You sure? Y/N: ")
         if answer == 'Y':
             self.contacts_book.data = {}
             return 'Contacts book now clean'

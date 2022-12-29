@@ -52,9 +52,9 @@ class WorkNote:
             result.extend(["Page Start", *result_str, "Page End"])
         return result
 
-    def delete_all(self):
+    def delete_all(self, *_):
         """Видаляє всі нотатки з книги"""
-        answer = input("You about to delete all notes in notebook. You shure? Y/N")
+        answer = input("You about to delete all notes in notebook. You sure? Y/N: ")
         if answer == 'Y':
             self.note_book.data = {}
             return "Note book now clean"
@@ -81,9 +81,16 @@ class WorkNote:
         if not name or not values:
             raise IndexError("You can't edit note without new information.")
         note: Note = self.note_book.data[name]
-        note.clear_text()
-        note.clear_tags()
-        return note.add_to_note(" ".join(values))
+        if values[0] == 'text':
+            note.clear_text()
+            return note.add_to_note(values[1:])
+
+        elif values[0] == 'tags':
+            note.clear_tags()
+            return note.add_to_note(values[1:])
+
+        else:
+            return "This field don't exist."
 
     def edit_name(self, name: str, info: list):
         """Змінює ім'я запису. Змінює як ім'я-ключ нотатки, так і в самій нотатці"""
