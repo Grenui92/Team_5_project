@@ -34,7 +34,7 @@ class WorkContact:
         rec_info = []
         for record in self.contacts_book.values():
             rec_info.append(str(record))
-        return rec_info
+        return rec_info if rec_info else "ContactBook is empty."
 
     def show_one(self, name: str, *_) -> str:
         """Виводить інформацію про один конкретний контакт"""

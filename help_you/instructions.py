@@ -1,5 +1,4 @@
 def show_instructions(command):
-    print("COOOOM", command)
     match command:
         case "contacts":
             return """"create_contact NAME" - Створює контакт з іменем NAME.

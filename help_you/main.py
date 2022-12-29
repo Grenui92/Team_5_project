@@ -63,8 +63,8 @@ def handler(command: str, name: str, data) -> str | list:
 def help_me(*_) -> str:
     return "If you want to know how to use this script - use command 'instruction' with:\n" \
            "'contacts' - to read about ContactBook commands.\n" \
-           "'notes' - to read about NoteBook.\n" \
-           "'file' - to read about FileSorter.\n" \
+           "'notes' - to read about NoteBook commands.\n" \
+           "'file_sorter' - to read about FileSorter.\n" \
            "Or use 'exit' if you want to leave."
 
 

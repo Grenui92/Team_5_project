@@ -32,7 +32,7 @@ class WorkNote:
         all_notes = []
         for note in self.note_book.values():
             all_notes.append(str(note))
-        return all_notes if all_notes else 'Notes is empty'
+        return all_notes if all_notes else 'NoteBook is empty.'
 
     def show_one(self, name: str, *_):
         """Показує одну конкретну нотатку"""
