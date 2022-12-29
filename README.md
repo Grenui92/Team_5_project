@@ -10,7 +10,7 @@
 
 "/home/{getlogin()}/Documents/help_you" для Linux\
 "C:/Users/{getlogin()}/AppData/Local/help_you" для Windows\
- для MacOS
+"Macintosh/Users/{getlogin()}/Documents/help_you" для MacOS
 
 ### Після встановлення - для запуску роботи скрипту треба використати в командному рядку команду "help_you"
 
