@@ -18,6 +18,10 @@ class Note:
         self.text += " " + " ".join(text)
         return f"The text to note '{self.name}' is added"
 
+    def add_to_tags(self, text):
+        self.tags.append(' '.join(i for i in text))
+        return 'New tags has been added'
+
     def clear_text(self):
         """Очищення текстового поля нотатки"""
 
