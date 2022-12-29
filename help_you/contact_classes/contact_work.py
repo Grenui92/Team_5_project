@@ -110,8 +110,9 @@ class WorkContact:
         return result
 
     def edit_information(self, name: str, args: list) -> str:
-        """Редагує інформацію у вказаному полі вказаного контакту.
-        :var command - має приймати одне з двох значень change or del"""
+        """Редагує інформацію у вказаному полі вказаного контакт. Command може приймати два значення - change & del. Change відповідає за
+        заміну інформації. Del - видаляє її."""
+
         try:
             command, field, values = args[0], args[1], [args[2], *args[3:]]
         except IndexError:
