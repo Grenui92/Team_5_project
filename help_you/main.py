@@ -113,7 +113,7 @@ def create_path_for_saves():
         case "win32":
             abs_path = f"C:/Users/{getlogin()}/AppData/Local/help_you"
         case "darwin":
-            pass
+            abs_path = f"Macintosh/Users/{getlogin()}/Documents/help_you"
         case _:
             raise OSError("I can't work with this OS. Sorry.")
     try:

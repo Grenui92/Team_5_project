@@ -5,7 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "help-you"
 version = "0.1"
-authors=[{name="Stas"}]
+authors = [{ name = "Станіслав Василенко" },
+    { name = "Черевченко Вікторія" },
+    { name = "Ольгі Іщенко" },
+    { name = "Володимир Завадський" },
+    { name = "Володимир Олійник" }]
 description = "Small program"
 readme = "README.md"
 
@@ -13,7 +17,7 @@ requires-python = ">=3.10"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-prompt-toolkit = "request"
+prompt-toolkit = "^3.0.36"
 
 [tool.setuptools.packages.find]
 where = ["help_you"]
