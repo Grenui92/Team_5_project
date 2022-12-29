@@ -330,7 +330,7 @@ def sort_targets(path_to_target, threaded=False):
     else:
         raise ValueError(f"{path_to_target} value error.")
     for path in pathes:
-        task = Task(pathes)
+        task = Task(path)
         task += Filter("archives", ["zip", "tar", "tgz", "gz", "7zip", "7z", "iso", "rar"], ["unpack", "move"])
         task += Filter("audios", ["wav", "mp3", "ogg", "amr"], ["move"])
         task += Filter("images", ["jpeg", "png", "jpg", "svg"], ["move"])
