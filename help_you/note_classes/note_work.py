@@ -1,8 +1,9 @@
 from book import Book
 from note_classes.note import Note
+from user_work_abstract import UserWork
 
 
-class WorkNote:
+class WorkNote(UserWork):
 
     def __init__(self, path):
         self.note_book = Book(path)
